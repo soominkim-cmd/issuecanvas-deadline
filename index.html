@@ -9,33 +9,33 @@
 <style>
 /* Layout: 팀 전체가 보는 날짜 보드. 요약 줄 → 월간 캘린더 + 선택 내용을 펼치는 오른쪽 패널. 이슈 상세는 한 줄기 문서형 칼럼. */
 :root {
---bg: #F4F5F8; --surface: #FFFFFF; --sunken: #EEF0F5; --line: #E5E7ED; --line-strong: #CFD3DE;
---fg: #202B4B; --muted: #646C80; --faint: #8A91A3;
---navy: #202B4B; --on-navy: #FFFFFF; --on-navy-soft: #C3CADC; --navy-track: #3C4770;
---primary: #202B4B; --on-primary: #FFFFFF;
---tint: #E7EBF5; --tint-fg: #2F3D68; --select: #DFE5F3;
---red: #E5484D; --red-text: #C9282E; --red-soft: #FCEBEC;
---done: #2E7D5B; --done-soft: #E4F2EC;
+--bg: #F9FAFB; --surface: #FFFFFF; --sunken: #F3F5F8; --line: #E8EBF0; --line-strong: #D5DAE3;
+--fg: #0F1F4D; --muted: #566077; --faint: #8C95A8;
+--navy: #0F2A78; --on-navy: #FFFFFF; --on-navy-soft: #C9D6FF; --navy-track: #2F4CA3;
+--primary: #0F2A78; --on-primary: #FFFFFF;
+--tint: #EAF0FF; --tint-fg: #173A9C; --select: #E3EBFF;
+--red: #EF3B42; --red-text: #D1222A; --red-soft: #FFEDEE;
+--done: #0E8A5F; --done-soft: #E3F7EF;
 --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
---bg: #11162A; --surface: #1A2038; --sunken: #151A30; --line: #2A3150; --line-strong: #3C4468;
---fg: #E8EBF4; --muted: #A3AAC0; --faint: #7F87A1;
---navy: #2A3560; --on-navy: #FFFFFF; --on-navy-soft: #C3CADC; --navy-track: #46527F;
---primary: #DCE3F5; --on-primary: #141B30;
---tint: #27304F; --tint-fg: #C9D2EC; --select: #2C3660;
---red: #FF6B70; --red-text: #FF8A8E; --red-soft: #3A1F2A;
---done: #6FCBA3; --done-soft: #1B3430; color-scheme: dark;
+--bg: #0B1020; --surface: #131A30; --sunken: #0F1528; --line: #252E4D; --line-strong: #3A4570;
+--fg: #EEF2FF; --muted: #A9B3D0; --faint: #7F8AAD;
+--navy: #1C3A9E; --on-navy: #FFFFFF; --on-navy-soft: #C9D6FF; --navy-track: #3F5CC0;
+--primary: #DCE6FF; --on-primary: #0B1530;
+--tint: #1C2A5A; --tint-fg: #C9D6FF; --select: #223270;
+--red: #FF5C62; --red-text: #FF8085; --red-soft: #3A1622;
+--done: #4FD6A2; --done-soft: #0F3329; color-scheme: dark;
 } }
 :root[data-theme="dark"] {
---bg: #11162A; --surface: #1A2038; --sunken: #151A30; --line: #2A3150; --line-strong: #3C4468;
---fg: #E8EBF4; --muted: #A3AAC0; --faint: #7F87A1;
---navy: #2A3560; --on-navy: #FFFFFF; --on-navy-soft: #C3CADC; --navy-track: #46527F;
---primary: #DCE3F5; --on-primary: #141B30;
---tint: #27304F; --tint-fg: #C9D2EC; --select: #2C3660;
---red: #FF6B70; --red-text: #FF8A8E; --red-soft: #3A1F2A;
---done: #6FCBA3; --done-soft: #1B3430; color-scheme: dark;
+--bg: #0B1020; --surface: #131A30; --sunken: #0F1528; --line: #252E4D; --line-strong: #3A4570;
+--fg: #EEF2FF; --muted: #A9B3D0; --faint: #7F8AAD;
+--navy: #1C3A9E; --on-navy: #FFFFFF; --on-navy-soft: #C9D6FF; --navy-track: #3F5CC0;
+--primary: #DCE6FF; --on-primary: #0B1530;
+--tint: #1C2A5A; --tint-fg: #C9D6FF; --select: #223270;
+--red: #FF5C62; --red-text: #FF8085; --red-soft: #3A1622;
+--done: #4FD6A2; --done-soft: #0F3329; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -245,6 +245,13 @@ dialog::backdrop { background: rgba(15, 20, 40, .45); }
 .form-foot { display: flex; justify-content: flex-end; gap: 8px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 20; max-width: calc(100vw - 32px); background: var(--primary); color: var(--on-primary); padding: 8px 14px; border-radius: 8px; font-size: 13px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+.vids { display: grid; gap: 12px; }
+.vid { margin: 0; display: grid; gap: 6px; }
+.vid video { display: block; width: 100%; max-height: 440px; border-radius: 8px; background: #000; }
+.vid figcaption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 10px; font-size: 12.5px; color: var(--muted); }
+.vid figcaption span { min-width: 0; overflow-wrap: anywhere; }
+.vid-err { padding: 22px 12px; text-align: center; font-size: 13px; color: var(--muted); background: var(--sunken); border-radius: 8px; }
+.vid-up { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .login { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: var(--bg); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); overflow-y: auto; }
 .login form { width: min(380px, 100%); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 12px; padding: 24px; display: grid; gap: 14px; }
 .login h1 { font-size: 22px; font-weight: 700; }
@@ -341,6 +348,18 @@ const user = {
 me: async () => { const s = await ready, n = getName(), admin = s.user.email === ADMIN; return { id: n, name: n, canEdit: admin, isOwner: admin }; },
 can: async () => true,
 profiles: async ids => Object.fromEntries([].concat(ids).map(id => [id, { id, name: id }])),
+};
+const BUCKET = 'issue-videos';
+window.__videos = {
+upload: async (issueId, file) => {
+const ext = (file.name.split('.').pop() || 'mp4').replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 8) || 'mp4';
+const path = issueId + '/' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+const { error } = await sb.storage.from(BUCKET).upload(path, file, { contentType: file.type, upsert: false });
+if (error) throw error;
+return path;
+},
+url: async path => { const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(path, 21600); if (error) throw error; return data.signedUrl; },
+remove: async paths => { const { error } = await sb.storage.from(BUCKET).remove(paths); if (error) throw error; },
 };
 window.__logout = async () => { await sb.auth.signOut(); location.reload(); };
 window.claude = { use: async n => { await ready; return n === 'db' ? db : n === 'user' ? user : null; } };
@@ -585,6 +604,7 @@ return `<div class="doc">${back}
 </div>
 ${ms.length ? `<section class="sheet block"><h2>이 이슈가 속한 주요 마감</h2><div class="stack">${ms.map(msRow).join('')}</div></section>` : ''}
 <section class="sheet block"><h2>어떤 문제인가요?</h2>${(i.problem || []).length ? `<ul class="bul">${i.problem.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '<p class="sub">아직 설명이 없어요.</p>'}</section>
+${videoSection(i)}
 <section class="sheet block"><h2>이렇게 되면 끝나요 <span>${done} / ${crit.length}</span></h2>
 <div>${crit.map((c, k) => `<label class="check${c.done ? ' done' : ''}"><input type="checkbox" id="crit-${k}" data-act="crit" data-id="${k}" ${c.done ? 'checked' : ''} ${act ? '' : 'disabled'}><span>${esc(c.text)}</span></label>`).join('') || '<p class="sub">완료 조건이 없어요.</p>'}</div></section>
 <section class="sheet block"><h2>진행 과정</h2><div class="steps">${STEPS.map(stepBtn).join('')}</div>
@@ -596,10 +616,63 @@ ${act ? `<div class="compose"><textarea id="memo-text" aria-label="수정 메모
 ${S.canWrite === false ? '' : `<div class="compose"><textarea id="chat-text" aria-label="메시지" placeholder="메시지 입력 · Ctrl+Enter로 보내기"></textarea><button class="btn small primary" data-act="send" data-id="chat">보내기</button></div>`}</section>
 ${del}</div>`;
 }
+/* 이슈 영상 */
+const MAX_VIDEO = 50 * 1024 * 1024;
+const vidCache = {};
+function videoSection(i) {
+const vs = i.videos || [], can = S.canWrite !== false;
+const item = v => {
+const mine = can && (S.canEdit || (!!S.me.id && v.by === S.me.id));
+const ctl = !mine ? '' : S.confirm === 'v:' + v.path
+? '<span class="actions"><button class="btn small danger" data-act="vid-del-yes" data-id="' + esc(v.path) + '">영상 삭제</button><button class="btn small" data-act="confirm-no">취소</button></span>'
+: '<button class="btn small" data-act="vid-del" data-id="' + esc(v.path) + '">삭제</button>';
+return '<figure class="vid"><div class="vid-slot" data-path="' + esc(v.path) + '"></div><figcaption><span>' + esc(v.name) + ' · ' + (v.size / 1048576).toFixed(1) + 'MB · ' + esc(nameOf(v.by)) + ' · ' + esc(stamp(v.at)) + '</span>' + ctl + '</figcaption></figure>';
+};
+const up = !can ? '' : S.uploading === i.id
+? '<div class="vid-up"><button class="btn small" disabled>올리는 중...</button><span class="sub">창을 닫지 말고 기다려 주세요.</span></div>'
+: '<div class="vid-up"><label class="btn small" for="vid-file" style="cursor:pointer">영상 올리기</label><input type="file" id="vid-file" accept="video/*" hidden><span class="sub">MP4, MOV, WebM · 파일당 50MB까지</span></div>';
+return '<section class="sheet block"><h2>이슈 영상 <span>' + vs.length + '</span></h2>'
++ (vs.length ? '<div class="vids">' + vs.map(item).join('') + '</div>' : '<p class="sub">이슈가 어떤 상황인지 보여 주는 영상을 올려 주세요.</p>')
++ up + '</section>';
+}
+function attachVideos(playing) {
+document.querySelectorAll('.vid-slot').forEach(slot => {
+const path = slot.dataset.path;
+let box = vidCache[path];
+if (!box) {
+box = document.createElement('div');
+const v = document.createElement('video');
+v.controls = true; v.preload = 'metadata'; v.playsInline = true;
+const fail = t => { box.textContent = ''; const d = document.createElement('div'); d.className = 'vid-err'; d.textContent = t; box.append(d); };
+v.addEventListener('error', () => fail('이 브라우저에서 재생할 수 없는 영상이에요. MP4로 변환해 다시 올려 보세요.'));
+box.append(v); vidCache[path] = box;
+window.__videos.url(path).then(u => { v.src = u; }).catch(() => fail('영상을 불러오지 못했어요. 페이지를 새로 열어 주세요.'));
+}
+slot.append(box);
+});
+playing.forEach(v => { if (v.isConnected) v.play().catch(() => {}); });
+}
+async function uploadVideo(file) {
+if (!file) return;
+if (!file.type.startsWith('video/')) { toast('영상 파일만 올릴 수 있어요.'); return; }
+if (file.size > MAX_VIDEO) { toast('50MB 이하의 영상만 올릴 수 있어요. 지금 파일은 ' + (file.size / 1048576).toFixed(0) + 'MB예요.'); return; }
+const id = curIssue;
+S.uploading = id; render();
+try {
+const path = await window.__videos.upload(id, file);
+const v = { path, name: file.name.slice(0, 120), size: file.size, type: file.type, by: S.me.id, at: new Date().toISOString() };
+const cur = S.issues.find(x => x.id === id);
+await write(() => issDoc(id).update({ videos: [...((cur && cur.videos) || []), v] }), '영상을 올렸어요');
+} catch (e) {
+toast('영상을 올리지 못했어요. 파일과 인터넷 연결을 확인한 뒤 다시 시도하세요.');
+}
+S.uploading = null; render();
+}
 /* 렌더: 입력 중인 값과 포커스를 유지 */
 let curIssue = null;
 function render() {
 const main = $('#main');
+const playing = [...main.querySelectorAll('video')].filter(v => !v.paused);
 const keep = {}; main.querySelectorAll('textarea[id]').forEach(t => keep[t.id] = t.value);
 const af = document.activeElement && main.contains(document.activeElement) ? document.activeElement.id : null;
 const r = S.route;
@@ -607,6 +680,7 @@ curIssue = r.startsWith('issue-') ? r.slice(6) : null;
 main.innerHTML = curIssue ? issueView(curIssue) : r === 'tasks' ? tasksView() : r === 'projects' ? projectsView() : calendarView();
 Object.entries(keep).forEach(([id, v]) => { const t = document.getElementById(id); if (t) t.value = v; });
 if (af) { const t = document.getElementById(af); if (t) t.focus(); }
+attachVideos(playing);
 const tab = curIssue ? S.from : r;
 $('#nav').innerHTML = [['tasks', '할 일'], ['projects', '프로젝트'], ['calendar', '마감']].map(([k, l]) => `<button data-act="nav" data-id="${k}" ${tab === k ? 'aria-current="page"' : ''}>${l}</button>`).join('');
 const who = $('#who'); who.textContent = '';
@@ -713,6 +787,7 @@ document.addEventListener('input', e => { if (e.target.id === 'm-search' || e.ta
 document.addEventListener('change', e => {
 if (e.target.dataset.pick) { e.target.checked ? pick.add(e.target.dataset.pick) : pick.delete(e.target.dataset.pick); $('#m-count').textContent = `${pick.size}개 선택됨`; }
 if (e.target.id === 'm-project') pickList();
+if (e.target.id === 'vid-file') uploadVideo(e.target.files[0]);
 if (e.target.dataset.act === 'crit') {
 const i = S.issues.find(x => x.id === curIssue); if (!i) return;
 const crit = (i.criteria || []).map((c, k) => k === +e.target.dataset.id ? { ...c, done: e.target.checked } : { ...c });
@@ -766,6 +841,7 @@ case 'iss-del': S.confirm = curIssue; render(); break;
 case 'iss-del-yes': {
 const iid = curIssue, ms = milestonesOf(cur); S.confirm = null; go(S.from);
 await write(() => issDoc(iid).delete(), '이슈를 삭제했어요');
+if ((cur.videos || []).length) window.__videos.remove(cur.videos.map(v => v.path)).catch(() => {});
 for (const m of ms) await write(() => msDoc(m.id).update({ issueIds: m.issueIds.filter(x => x !== iid) }));
 for (const c of S.comments.filter(c => c.issueId === iid)) await write(() => S.db.doc('comments/' + c.id).delete());
 break;
@@ -776,6 +852,7 @@ const iss = S.issues.filter(i => i.example), ms = S.milestones.filter(m => m.exa
 for (const m of ms) await write(() => msDoc(m.id).delete());
 for (const i of iss) {
 await write(() => issDoc(i.id).delete());
+if ((i.videos || []).length) window.__videos.remove(i.videos.map(v => v.path)).catch(() => {});
 for (const c of S.comments.filter(c => c.issueId === i.id)) await write(() => S.db.doc('comments/' + c.id).delete());
 }
 toast('예시를 삭제했어요');
@@ -786,6 +863,13 @@ if (!S.me.id) { toast('로그인해야 이슈를 맡을 수 있어요.'); break;
 await write(() => issDoc(cur.id).update({ takers: [...(cur.takers || []), S.me.id] }), '이슈를 맡았어요'); break;
 case 'untake': await write(() => issDoc(cur.id).update({ takers: (cur.takers || []).filter(x => x !== S.me.id) }), '맡기를 취소했어요'); break;
 case 'step': await write(() => issDoc(cur.id).update({ step: +id })); break;
+case 'vid-del': S.confirm = 'v:' + id; render(); break;
+case 'vid-del-yes': {
+S.confirm = null;
+const ok = await write(() => issDoc(cur.id).update({ videos: (cur.videos || []).filter(v => v.path !== id) }), '영상을 삭제했어요');
+if (ok) { delete vidCache[id]; window.__videos.remove([id]).catch(() => {}); }
+render(); break;
+}
 case 'send': send(id); break;
 case 'logout': await window.__logout(); break;
 }

@@ -1705,9 +1705,9 @@ err.hidden = false; return;
 $('#login').hidden = true; start(data.session);
 });
 async function start(session) {
-try { await loadMembers(); } catch (e) { S.members = []; }
+try { await withTimeout(loadMembers(), 8000); } catch (e) { S.members = []; }
 const me = S.members.find(m => m.id === session.user.id);
-if (!me) { await sb.auth.signOut(); showLogin('팀원 목록에 없는 계정이에요. 관리자에게 문의하세요.'); return; }
+if (!me) { await dropSession(); showLogin('다시 로그인해 주세요. 개인 아이디로 로그인하세요.'); return; }
 S.me = me;
 const h = legacy(location.hash.slice(1)); if (ROUTE_RE.test(h)) S.route = h;
 render();
@@ -1717,9 +1717,16 @@ catch (e) { S.load = 'error'; }
 clearTimeout(timer); render(); subscribe();
 }
 S.month = today().slice(0, 7); S.week = weekStart(today());
+function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]); }
+async function dropSession() {
+try { await withTimeout(sb.auth.signOut({ scope: 'local' }), 3000); } catch (e) {}
+try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+}
 (async () => {
-const { data } = await sb.auth.getSession();
-if (data.session) start(data.session); else showLogin();
+let session = null;
+try { const { data } = await withTimeout(sb.auth.getSession(), 6000); session = data && data.session; } catch (e) { await dropSession(); }
+if (!session) { showLogin(); return; }
+try { await start(session); } catch (e) { await dropSession(); showLogin('다시 로그인해 주세요.'); }
 })();
 </script>
 </body>

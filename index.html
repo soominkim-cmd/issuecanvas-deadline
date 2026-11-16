@@ -486,7 +486,7 @@ textarea { resize: vertical; min-height: 66px; }
 <h1 id="crumb"></h1>
 <button class="me-chip" data-act="nav" data-id="settings" id="me-chip"></button>
 </header>
-<main id="main"></main>
+<main id="main"><p class="boot-msg" style="padding:48px 24px;color:var(--muted,#667);font-size:14px">불러오는 중…</p></main>
 </div>
 <div id="drawer-root"></div>
 <dialog id="dlg"></dialog>
@@ -497,7 +497,7 @@ textarea { resize: vertical; min-height: 66px; }
 const SB_URL = 'https://rqritcsfzqxojfzyuzfr.supabase.co';
 const SB_KEY = 'sb_publishable_7cAaLAgzdlPBSmu4PXKvHQ_MkEZGWSb';
 const MAIL = '@issuecanvas.invalid';
-const sb = supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true } });
+const sb = window.supabase && supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, lock: async (name, acquireTimeout, fn) => await fn() } });
 
 /* ---------- 상수 ---------- */
 const PROJECTS = ['BeCalmiOS', 'BeCalmAndroid'];
@@ -1690,7 +1690,9 @@ function scrollPanel() { if (innerWidth <= 1180) { const p = $('#panel'); if (p)
 function showLogin(msg) {
 const box = $('#login'); box.hidden = false;
 const err = $('#l-err'); if (msg) { err.textContent = msg; err.hidden = false; }
-setTimeout(() => $('#l-id').focus(), 30);
+let last = ''; try { last = localStorage.getItem('ic-last-id') || ''; } catch (e) {}
+if (last && !$('#l-id').value) $('#l-id').value = last;
+setTimeout(() => (last ? $('#l-pass') : $('#l-id')).focus(), 30);
 }
 $('#l-form').addEventListener('submit', async ev => {
 ev.preventDefault();
@@ -1702,6 +1704,7 @@ if (error) {
 err.textContent = /banned/i.test(error.message) ? '이전 공용 계정은 더 이상 쓸 수 없어요. 개인 아이디로 로그인하세요.' : /invalid/i.test(error.message) ? '아이디 또는 비밀번호가 맞지 않아요.' : '로그인하지 못했어요. 잠시 후 다시 시도하세요.';
 err.hidden = false; return;
 }
+try { localStorage.setItem('ic-last-id', login); } catch (e) {}
 $('#login').hidden = true; start(data.session);
 });
 async function start(session) {
@@ -1723,8 +1726,17 @@ try { await withTimeout(sb.auth.signOut({ scope: 'local' }), 3000); } catch (e) 
 try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); } catch (e) {}
 }
 (async () => {
+if (!sb) { $('#main').innerHTML = '<p class="boot-msg" style="padding:48px 24px;font-size:14px">사이트를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.</p>'; return; }
 let session = null;
-try { const { data } = await withTimeout(sb.auth.getSession(), 6000); session = data && data.session; } catch (e) { await dropSession(); }
+try { const { data } = await withTimeout(sb.auth.getSession(), 4000); session = data && data.session; }
+catch (e) {
+/* 세션 확인이 멈추면 저장된 로그인 정보로 한 번 더 시도한다 */
+try {
+const k = Object.keys(localStorage).find(x => x.startsWith('sb-') && x.endsWith('-auth-token'));
+const saved = k && JSON.parse(localStorage.getItem(k));
+if (saved && saved.refresh_token) { const { data } = await withTimeout(sb.auth.setSession({ access_token: saved.access_token, refresh_token: saved.refresh_token }), 5000); session = data && data.session; }
+} catch (e2) {}
+}
 if (!session) { showLogin(); return; }
 try { await start(session); } catch (e) { await dropSession(); showLogin('다시 로그인해 주세요.'); }
 })();

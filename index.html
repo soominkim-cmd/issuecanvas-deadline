@@ -347,6 +347,12 @@ main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: m
 .dl svg.i { width: 12px; height: 12px; }
 .ev { display: grid; gap: 3px; padding: 7px 8px; border-radius: 8px; background: var(--cb); color: var(--fg); text-align: left; width: 100%; min-width: 0; }
 .ev:hover { box-shadow: inset 0 0 0 1.5px var(--c); }
+.ev.und, .mini-ev.und { background: transparent; outline: 1.5px dashed var(--c); outline-offset: -1.5px; }
+.avl { display: grid; gap: 6px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.avl-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12.5px; min-width: 0; }
+.avl-row .av { width: 22px; height: 22px; font-size: 10px; }
+.avl-row b { font-weight: 560; }
+.avl-row .sub { font-size: 11.5px; overflow-wrap: anywhere; min-width: 0; }
 .ev.sel { box-shadow: inset 0 0 0 2px var(--c); }
 .ev .tm { font-size: 11.5px; font-weight: 560; color: var(--c); }
 .ev .ti { font-size: 12.5px; font-weight: 540; line-height: 1.35; overflow-wrap: anywhere; }
@@ -605,7 +611,10 @@ const evLabel = e => e.title != null ? e.title : (e.visibility === 'private' ? '
 const evColor = e => ECAT[e.category][1];
 const evEnd = e => { const en = kst(e.end_at); return e.all_day ? addDays(en.date, -1) : (en.time === '00:00' ? addDays(en.date, -1) : en.date); };
 function evDays(e) { const s = kst(e.start_at).date, end = evEnd(e), out = []; for (let d = s; d <= end && out.length < 60; d = addDays(d, 1)) out.push(d); return out; }
+const isUnd = e => e.time_mode === 'undecided';
+const tmRank = e => e.all_day ? 0 : isUnd(e) ? 1 : 2;
 function evTime(e, day) {
+if (isUnd(e)) return '시간 미정';
 if (e.all_day) return '종일';
 const s = kst(e.start_at), en = kst(e.end_at), end = evEnd(e);
 if (s.date === end) return `${s.time}–${en.time}`;
@@ -615,13 +624,14 @@ return '종일';
 }
 function evRange(e) {
 const s = kst(e.start_at), end = evEnd(e);
+if (isUnd(e)) return `${full(s.date)} · 시간 미정`;
 if (e.all_day) return s.date === end ? `${full(s.date)} · 종일` : `${full(s.date)} ~ ${full(end)} · 종일`;
 const en = kst(e.end_at);
 return s.date === end ? `${full(s.date)} · ${s.time}–${en.time}` : `${full(s.date)} ${s.time} ~ ${full(end)} ${en.time}`;
 }
 const canEditEv = e => !!S.me && (e.created_by === S.me.id || (isAdmin() && e.visibility === 'team'));
 const evOn = (day, opts = {}) => S.events.filter(e => (opts.cancelled || e.status === 'active') && evDays(e).includes(day))
-.sort((a, b) => (b.all_day - a.all_day) || a.start_at.localeCompare(b.start_at));
+.sort((a, b) => (tmRank(a) - tmRank(b)) || a.start_at.localeCompare(b.start_at));
 
 /* ---------- 공통 조각 ---------- */
 const avs = ids => `<span class="avs">${ids.map(id => avatar(id)).join('')}</span>`;
@@ -651,7 +661,7 @@ return `<button class="row" data-act="milestone" data-id="${esc(m.id)}">
 }
 function miniEv(e, showDate) {
 const s = kst(e.start_at);
-return `<button class="mini-ev c-${evColor(e)}" data-act="event" data-id="${e.id}">
+return `<button class="mini-ev c-${evColor(e)}${isUnd(e) ? ' und' : ''}" data-act="event" data-id="${e.id}">
 <span class="when">${showDate ? md(s.date) + ' ' : ''}${evTime(e, s.date)}</span><span class="what">${esc(evLabel(e))}</span>
 <span class="who">${avs(e.participants)}<span>${esc(e.participants.map(nameOf).join(', '))} · ${ECAT[e.category][0]}</span></span></button>`;
 }
@@ -776,7 +786,22 @@ edit = `<form class="status-edit" id="status-form"><div class="sec">내 상태</
 <input type="text" id="status-note" maxlength="40" placeholder="메모 (예: 판교 미팅, 15시 복귀)" value="${esc(me.status_note)}" aria-label="상태 메모">
 <div class="form-foot"><button type="button" class="btn small" data-act="status-cancel">취소</button><button class="btn small primary">저장</button></div></form>`;
 }
-return `<section class="sheet team" aria-label="팀 상태"><div class="sec-title">팀 상태<small>직접 바꾼 상태예요</small></div><div class="people">${ppl}</div>${edit}</section>`;
+return `<section class="sheet team" aria-label="팀 상태"><div class="sec-title">팀 상태<small>직접 바꾼 상태예요</small></div><div class="people">${ppl}</div>${edit}${availHTML()}</section>`;
+}
+// 오늘 팀 일정으로 본 가용성: 종일 = 하루 부재, 시간 지정 = 그 시간만 부재, 시간 미정 = 일정만 있음(부재 아님)
+function availOf(id, day = today(), now = Date.now()) {
+const evs = evOn(day).filter(e => e.participants.includes(id));
+const all = evs.filter(e => e.all_day), timed = evs.filter(e => !e.all_day && !isUnd(e)), und = evs.filter(isUnd);
+const live = timed.filter(e => new Date(e.start_at).getTime() <= now && now < new Date(e.end_at).getTime());
+const later = timed.filter(e => new Date(e.end_at).getTime() > now);
+const tag = all.length ? ['종일 부재', 'red'] : live.length ? [`지금 부재 · ~${kst(live[0].end_at).time}`, 'orange'] : later.length ? ['시간대별 부재', 'amber'] : und.length ? ['일정 있음', 'slate'] : evs.length ? ['오늘 일정 끝', 'slate'] : ['일정 없음', 'line'];
+const parts = [...all.map(e => `종일 · ${evLabel(e)}`), ...timed.map(e => `${evTime(e, day)} ${evLabel(e)}`), ...und.map(e => `시간 미정 · ${evLabel(e)}`)];
+return { tag, parts, allDay: all.length > 0, busyNow: all.length > 0 || live.length > 0, undecided: und.length };
+}
+function availHTML() {
+const rows = team().map(m => { const a = availOf(m.id);
+return `<div class="avl-row">${avatar(m.id)}<b>${esc(m.name)}</b><span class="tag ${a.tag[1] === 'line' ? 'line' : 'c-' + a.tag[1]}">${esc(a.tag[0])}</span>${a.parts.length ? `<span class="sub">${esc(a.parts.join(' · '))}</span>` : ''}</div>`; }).join('');
+return `<div class="avl" aria-label="오늘 가용성"><div class="sec">오늘 일정으로 본 가용성</div><p class="sub" style="margin:0 0 2px">종일 일정은 하루 부재, 시간 지정은 그 시간만 부재, 시간 미정은 부재로 치지 않아요.</p>${rows}</div>`;
 }
 function weekCard() {
 const t0 = weekStart(today()), t1 = addDays(t0, 6), now = Date.now();
@@ -893,7 +918,7 @@ total += evs.length;
 const dls = !f.deadlines ? [] : [
 ...S.milestones.filter(m => m.date === d).map(m => `<button class="dl m" data-act="milestone" data-id="${esc(m.id)}" title="주요 마감: ${esc(m.title)}">${icon('flag')}${esc(m.title)}</button>`),
 ...S.issues.filter(i => i.due === d && !closed(i)).map(i => `<button class="dl i c-${PROJ_C[i.project] || 'slate'}${over(i) ? ' over' : ''}" data-act="issue" data-id="${esc(i.id)}" title="이슈 마감: ${esc(i.title)}">${icon('flag')}${esc(PROJ_S[i.project] || '')} ${esc(i.title)}</button>`)];
-const items = evs.map(e => `<button class="ev c-${evColor(e)}${e.status === 'cancelled' ? ' cancelled' : ''}${S.drawer && S.drawer.id === e.id ? ' sel' : ''}" data-act="event" data-id="${e.id}">
+const items = evs.map(e => `<button class="ev c-${evColor(e)}${isUnd(e) ? ' und' : ''}${e.status === 'cancelled' ? ' cancelled' : ''}${S.drawer && S.drawer.id === e.id ? ' sel' : ''}" data-act="event" data-id="${e.id}">
 <span class="tm">${evTime(e, d)}${e.status === 'cancelled' ? ' · 취소됨' : ''}</span>
 <span class="ti${e.title == null ? ' masked' : ''}">${esc(evLabel(e))}</span>
 <span class="mt"><span class="ty">${e.title == null ? '상세 비공개' : ECAT[e.category][0]}</span>${String(e.source).startsWith('slack') ? '<span class="src" title="Slack에서 등록된 일정">Slack</span>' : ''}${avs(e.participants)}</span></button>`).join('');
@@ -920,7 +945,7 @@ not_work: '업무 일정 단어 없음', author_unmapped: '팀원과 연결 안 
 change_unclear: '바뀐 날짜·시간 없음', change: '기존 일정 변경', cancel: '일정 취소', several_dates: '날짜가 여러 개', several_times: '시간이 여러 개',
 edit_no_schedule: '수정된 메시지에 일정 없음', edit_same: '수정됐지만 일정은 같음', edited_after_register: '등록 뒤 메시지 수정',
 already_registered: '이미 캘린더에 있음', past_date: '지난 날짜', missing: '빠진 정보', not_enough_info: '날짜·시간 부족',
-no_title: '일정 이름 없음', personal_detail: '개인 사정 포함', not_confirmed: '확정 여부 불분명' };
+no_title: '일정 이름 없음', time_mode: '시간 형태(시간 지정·하루 종일·시간 미정) 선택 필요', personal_detail: '개인 사정 포함', not_confirmed: '확정 여부 불분명' };
 const slState = r => r.review_state === 'pending' ? 'review' : r.review_state === 'shadow' ? 'shadow'
 : (r.review_state === 'registered' || r.review_state === 'applied') ? (r.decision === 'AUTO' ? 'auto' : 'done')
 : r.review_state === 'ignored' || r.review_state === 'undone' || (r.decision === 'IGNORE' && !(r.reasons || []).includes('not_candidate')) ? 'ignored' : 'other';
@@ -943,7 +968,7 @@ const ev = r.registered_event || (st === 'done' && r.target_event);
 let acts = '';
 if (canDecide) acts = complete
 ? `<button class="btn small primary" data-act="sl-confirm" data-id="${r.id}">${r.intent === 'cancel' ? '확인 및 취소' : '확인 및 등록'}</button><button class="btn small" data-act="sl-ignore" data-id="${r.id}">무시하기</button>${link}`
-: `<span class="sub">빠진 정보가 있어요. Slack DM의 ‘입력’ 버튼에서 채워 주세요.</span><button class="btn small" data-act="sl-ignore" data-id="${r.id}">무시하기</button>${link}`;
+: `<span class="sub">${r.review_kind === 'timemode' ? 'Slack DM에서 ‘시간 지정·하루 종일·시간 미정’ 중 하나를 골라 주세요.' : '빠진 정보가 있어요. Slack DM의 ‘입력’ 버튼에서 채워 주세요.'}</span><button class="btn small" data-act="sl-ignore" data-id="${r.id}">무시하기</button>${link}`;
 else acts = `${ev && S.events.some(e => e.id === ev) ? `<button class="btn small" data-act="event" data-id="${ev}">일정 보기</button>` : ''}${link}`;
 return `<article class="slk-item"><div class="r1"><span class="tag c-${SL_TAB[st]?.[1] || 'slate'}">${SL_TAB[st]?.[0] || ''}</span>${intent ? `<span class="tag line">${intent}</span>` : ''}${avatar(r.author_member || '?')}<span>${esc(r.author_member ? nameOf(r.author_member) : 'Slack 사용자')} · ${esc(ago(r.received_at))}</span>${r.trigger === 'reaction' ? '<span class="tag line">📅 요청</span>' : ''}${r.review_state === 'undone' ? '<span class="tag line">등록 취소됨</span>' : ''}${r.deleted ? '<span class="tag line">원문 삭제됨</span>' : ''}</div>
 ${body}${r.text ? `<div class="q">${esc(r.text.length > 160 ? r.text.slice(0, 160) + '…' : r.text)}</div>` : ''}${why ? `<div class="why">${st === 'review' ? '확인이 필요한 이유' : '판단 근거'}: ${esc(why)}</div>` : ''}
@@ -1004,12 +1029,12 @@ return `<div class="scrim" data-act="drawer-close"></div><aside class="drawer" r
 function histHTML(h) {
 if (h == null) return '<span>불러오는 중이에요.</span>';
 if (!h.length) return '<span>기록이 없어요.</span>';
-const fmt = x => x ? evRange({ start_at: x.start_at, end_at: x.end_at, all_day: x.all_day }) : '';
+const fmt = x => x ? evRange({ start_at: x.start_at, end_at: x.end_at, all_day: x.all_day, time_mode: x.time_mode }) : '';
 return h.map(c => {
 let what = { created: '등록', cancelled: '취소', restored: '취소 되돌림' }[c.change_type] || '';
 if (c.change_type === 'updated' && c.before && c.after) {
 const parts = [];
-if (c.before.start_at !== c.after.start_at || c.before.end_at !== c.after.end_at || c.before.all_day !== c.after.all_day) parts.push(`시간 ${fmt(c.before)} → ${fmt(c.after)}`);
+if (c.before.start_at !== c.after.start_at || c.before.end_at !== c.after.end_at || c.before.all_day !== c.after.all_day || (c.before.time_mode || '') !== (c.after.time_mode || '')) parts.push(`시간 ${fmt(c.before)} → ${fmt(c.after)}`);
 if (c.before.title !== c.after.title) parts.push(`제목 ‘${c.before.title}’ → ‘${c.after.title}’`);
 if (c.before.category !== c.after.category) parts.push(`유형 ${ECAT[c.before.category]?.[0]} → ${ECAT[c.after.category]?.[0]}`);
 if (c.before.visibility !== c.after.visibility) parts.push(`공개 범위 ${VIS[c.before.visibility]?.[0]} → ${VIS[c.after.visibility]?.[0]}`);
@@ -1114,10 +1139,11 @@ out.push({ ...base, title, start: `${pad(mm[1])}:${mm[2]}`, end: +mm[3] === 24 ?
 } else {
 const allDay = /종일|하루\s*종일|all\s*day/i.test(line);
 const one = line.match(/(\d{1,2}):(\d{2})/);
-let title = tidy(line.replace(/종일|하루\s*종일|all\s*day/ig, ''));
+const undecided = !allDay && !one && /시간\s*(은|이)?\s*(미정|추후|tbd)/i.test(line);
+let title = tidy(line.replace(/종일|하루\s*종일|all\s*day/ig, '').replace(/[(\[]?\s*시간\s*(은|이)?\s*(미정|추후|tbd)\s*[)\]]?/ig, ''));
 let start = '', end = '';
 if (one && !allDay) { start = `${pad(one[1])}:${one[2]}`; title = tidy(line.replace(one[0], '')); }
-out.push({ ...base, title, allDay, start, end, badTime: one ? (+one[1] > 23 || +one[2] > 59) : false, noTime: !allDay && !one });
+out.push({ ...base, title, allDay, undecided, start, end, badTime: one ? (+one[1] > 23 || +one[2] > 59) : false, noTime: !allDay && !one && !undecided });
 }
 });
 return out.map((c, i) => {
@@ -1131,9 +1157,10 @@ const iss = [];
 if (!c.title.trim()) iss.push(['제목을 입력해 주세요.']);
 if (!c.date) iss.push([c.dateNote === 'bad' ? '날짜를 읽을 수 없어요. 날짜를 골라 주세요.' : '날짜가 없어요. 날짜를 골라 주세요.']);
 else if (!c.dateOk) iss.push(['앞 줄의 날짜를 이어받았어요. 맞는지 확인해 주세요.', 'date-ok', '날짜 맞아요']);
-if (!c.allDay) {
+if (c.undecided) { /* 시간 미정: 날짜만 있으면 된다 */ }
+else if (!c.allDay) {
 if (c.badTime) iss.push(['시각을 읽을 수 없어요. 시작·종료 시각을 다시 골라 주세요.']);
-else if (!c.start && !c.end) iss.push(['시간이 없어요. 시각을 정하거나 종일로 바꿔 주세요.', 'allday', '종일 일정으로']);
+else if (!c.start && !c.end) iss.push(['시간이 없어요. 시각을 정하거나 종일·시간 미정으로 바꿔 주세요.', 'allday', '종일 일정으로', 'undecided', '시간 미정으로']);
 else if (!c.start) iss.push(['시작 시각을 정해 주세요.']);
 else if (!c.end) iss.push(['종료 시각이 없어요. 종료 시각을 정해 주세요.']);
 else if (c.end <= c.start && !c.nextDay) iss.push(['종료가 시작보다 빠르거나 같아요. 다음 날까지 이어지나요?', 'nextday', '다음 날까지예요']);
@@ -1144,15 +1171,18 @@ if (mode !== 'edit' && !c.dupOk && isDup(c)) iss.push(['같은 날짜·시간·�
 return iss;
 }
 function cardTimes(c) {
-if (c.allDay) return { start_at: toIso(c.date, '00:00'), end_at: toIso(addDays(c.endDate && c.endDate > c.date ? c.endDate : c.date, 1), '00:00'), all_day: true };
-return { start_at: toIso(c.date, c.start), end_at: toIso(c.nextDay || c.end <= c.start ? addDays(c.date, 1) : c.date, c.end), all_day: false };
+if (c.undecided) return { start_at: toIso(c.date, '00:00'), end_at: toIso(addDays(c.date, 1), '00:00'), all_day: false, time_mode: 'undecided' };
+if (c.allDay) return { start_at: toIso(c.date, '00:00'), end_at: toIso(addDays(c.endDate && c.endDate > c.date ? c.endDate : c.date, 1), '00:00'), all_day: true, time_mode: 'all_day' };
+return { start_at: toIso(c.date, c.start), end_at: toIso(c.nextDay || c.end <= c.start ? addDays(c.date, 1) : c.date, c.end), all_day: false, time_mode: 'timed' };
 }
 function isDup(c) {
-if (!c.date || !c.title.trim() || (!c.allDay && (!c.start || !c.end))) return false;
-const t = cardTimes(c), same = e => e.status === 'active' && e.title === c.title.trim() && new Date(e.start_at).getTime() === new Date(t.start_at).getTime() && new Date(e.end_at).getTime() === new Date(t.end_at).getTime();
+if (!c.date || !c.title.trim() || (!c.allDay && !c.undecided && (!c.start || !c.end))) return false;
+const t = cardTimes(c), same = e => e.status === 'active' && e.title === c.title.trim() && (t.time_mode === 'undecided' || isUnd(e)
+? kst(e.start_at).date === c.date
+: new Date(e.start_at).getTime() === new Date(t.start_at).getTime() && new Date(e.end_at).getTime() === new Date(t.end_at).getTime());
 if (S.events.some(same)) return true;
 const a = S.add; if (!a) return false;
-return a.cards.some(o => o !== c && o.idx < c.idx && !o.excluded && o.title.trim() === c.title.trim() && o.date === c.date && o.start === c.start && o.end === c.end && o.allDay === c.allDay);
+return a.cards.some(o => o !== c && o.idx < c.idx && !o.excluded && o.title.trim() === c.title.trim() && o.date === c.date && o.start === c.start && o.end === c.end && o.allDay === c.allDay && !!o.undecided === !!c.undecided);
 }
 const cardState = (c, mode) => c.saved ? 'saved' : c.excluded ? 'excluded' : cardIssues(c, mode).length ? 'needs' : 'ok';
 function cardEditor(c, mode) {
@@ -1163,13 +1193,15 @@ return `<div class="rcard ${st}" data-card="${id}">
 <div class="rc-grid">
 <label class="f wide">일정명<input type="text" data-f="title" value="${esc(c.title)}" maxlength="200" ${c.saved ? 'disabled' : ''}></label>
 <label class="f">날짜<input type="date" data-f="date" value="${esc(c.date)}" ${c.saved ? 'disabled' : ''}></label>
-${c.allDay ? `<label class="f">종료 날짜<input type="date" data-f="endDate" value="${esc(c.endDate || c.date)}" ${c.saved ? 'disabled' : ''}></label><span></span>`
+${c.undecided ? `<span class="sub" style="align-self:end;padding-bottom:8px">시간 미정 · 시간이 정해지면 체크를 풀고 입력하세요</span><span></span>`
+: c.allDay ? `<label class="f">종료 날짜<input type="date" data-f="endDate" value="${esc(c.endDate || c.date)}" ${c.saved ? 'disabled' : ''}></label><span></span>`
 : `<label class="f">시작<input type="time" data-f="start" value="${esc(c.start)}" ${c.saved ? 'disabled' : ''}></label><label class="f">종료<input type="time" data-f="end" value="${esc(c.end)}" ${c.saved ? 'disabled' : ''}></label>`}
 </div>
 <div class="rc-grid2">
 <label class="f">유형<select data-f="category" ${c.saved ? 'disabled' : ''}>${c.category ? '' : '<option value="" selected>유형 선택</option>'}${Object.keys(ECAT).map(k => opt(k, c.category, ECAT[k][0])).join('')}</select></label>
 <label class="f">공개 범위<select data-f="visibility" ${c.saved ? 'disabled' : ''}>${Object.keys(VIS).map(k => opt(k, c.visibility, VIS[k][0])).join('')}</select></label>
 <label class="chk"><input type="checkbox" data-f="allDay" ${c.allDay ? 'checked' : ''} ${c.saved ? 'disabled' : ''}>종일</label>
+<label class="chk" title="날짜는 정해졌지만 시간은 아직 안 정해진 일정"><input type="checkbox" data-f="undecided" ${c.undecided ? 'checked' : ''} ${c.saved ? 'disabled' : ''}>시간 미정</label>
 </div>
 <div class="pp"><span>관련 인물</span>${team().map(m => `<button type="button" class="fchip" data-f="person" data-id="${m.id}" aria-pressed="${c.participants.includes(m.id)}" ${c.saved ? 'disabled' : ''}>${avatar(m.id)}${esc(m.name)}</button>`).join('')}</div>
 <ul class="rc-issues" data-part="issues">${cardIssueList(c, mode)}</ul>
@@ -1180,13 +1212,13 @@ ${c.raw ? `<details class="rc-raw"><summary>원문 보기 (${c.line}번째 줄)<
 function cardHead(c, mode) {
 const st = cardState(c, mode);
 const badge = { ok: ['정상', 'green'], needs: ['확인 필요', 'red'], excluded: ['제외', 'slate'], saved: ['등록됨', 'green'] }[st];
-const when = c.date ? `${md(c.date)} (${DOW[dowOf(c.date)]}) ${c.allDay ? '종일' : (c.start || '--:--') + '–' + (c.end || '--:--')}` : '날짜 미확인';
+const when = c.date ? `${md(c.date)} (${DOW[dowOf(c.date)]}) ${c.undecided ? '시간 미정' : c.allDay ? '종일' : (c.start || '--:--') + '–' + (c.end || '--:--')}` : '날짜 미확인';
 return `<span class="actions"><span class="tag c-${badge[1]}">${badge[0]}</span><b style="font-weight:560">${esc(when)}</b>${c.typeGuess && c.category === c.typeGuess && mode !== 'edit' ? `<span class="sub">유형은 내용으로 추천했어요</span>` : ''}</span>
 ${mode === 'edit' || c.saved ? '' : `<button type="button" class="btn small" data-act="card-ex">${c.excluded ? '다시 포함' : '등록에서 제외'}</button>`}`;
 }
 function cardIssueList(c, mode) {
 if (c.saved || c.excluded) return '';
-return cardIssues(c, mode).map(([t, a, b]) => `<li>${esc(t)}${a ? `<button type="button" class="btn small" data-act="card-fix" data-id="${a}">${esc(b)}</button>` : ''}</li>`).join('')
+return cardIssues(c, mode).map(([t, a, b, a2, b2]) => `<li>${esc(t)}${a ? `<button type="button" class="btn small" data-act="card-fix" data-id="${a}">${esc(b)}</button>` : ''}${a2 ? `<button type="button" class="btn small" data-act="card-fix" data-id="${a2}">${esc(b2)}</button>` : ''}</li>`).join('')
 + (c.visibility === 'private' && c.category !== 'personal' ? '<li class="info">비공개로 등록하면 팀원에게는 ‘개인 일정’과 시간만 보여요.</li>' : '');
 }
 
@@ -1248,7 +1280,8 @@ const a = S.add; return [a.tab === 'bulk' ? a.cards[+k] : a.single, 'add'];
 function applyField(c, f, v) {
 if (f === 'category') { c.category = v; c.typeOk = true; if (!c.visTouched) c.visibility = defaultVis(v); }
 else if (f === 'visibility') { c.visibility = v; c.visTouched = true; }
-else if (f === 'allDay') { c.allDay = v; if (!v && !c.start) { c.start = '10:00'; c.end = '11:00'; } }
+else if (f === 'allDay') { c.allDay = v; if (v) c.undecided = false; if (!v && !c.undecided && !c.start) { c.start = '10:00'; c.end = '11:00'; } }
+else if (f === 'undecided') { c.undecided = v; if (v) c.allDay = false; if (!v && !c.start) { c.start = '10:00'; c.end = '11:00'; } }
 else if (f === 'date') { c.date = v; c.dateOk = true; c.dateNote = null; }
 else if (f === 'start' || f === 'end') { c[f] = v; c.badTime = false; if (c.end > c.start) c.nextDay = false; }
 else c[f] = v;
@@ -1495,7 +1528,9 @@ if (S.drawer && S.drawer.id === id) { S.drawer.history = data || []; if (!S.draw
 }
 function editCard(e) {
 const s = kst(e.start_at), en = kst(e.end_at), end = evEnd(e);
-return { idx: 0, raw: '', title: e.title || '', note: e.note || '', date: s.date, dateOk: true, allDay: e.all_day, endDate: e.all_day ? end : '', start: e.all_day ? '' : s.time, end: e.all_day ? '' : en.time, nextDay: !e.all_day && end !== s.date,
+if (isUnd(e)) return { idx: 0, raw: '', title: e.title || '', note: e.note || '', date: s.date, dateOk: true, allDay: false, undecided: true, endDate: '', start: '', end: '', nextDay: false,
+category: e.category, typeOk: true, visibility: e.visibility, visTouched: true, participants: e.participants.slice(), saved: false, excluded: false, dupOk: true, version: e.version };
+return { idx: 0, raw: '', title: e.title || '', note: e.note || '', date: s.date, dateOk: true, allDay: e.all_day, undecided: false, endDate: e.all_day ? end : '', start: e.all_day ? '' : s.time, end: e.all_day ? '' : en.time, nextDay: !e.all_day && end !== s.date,
 category: e.category, typeOk: true, visibility: e.visibility, visTouched: true, participants: e.participants.slice(), saved: false, excluded: false, dupOk: true, version: e.version };
 }
 async function saveEvent() {
@@ -1507,6 +1542,7 @@ if ((c.note || '') !== (e.note || '')) patch.note = c.note || '';
 if (new Date(t.start_at).getTime() !== new Date(e.start_at).getTime()) patch.start_at = t.start_at;
 if (new Date(t.end_at).getTime() !== new Date(e.end_at).getTime()) patch.end_at = t.end_at;
 if (t.all_day !== e.all_day) patch.all_day = t.all_day;
+if (t.time_mode !== (e.time_mode || (e.all_day ? 'all_day' : 'timed'))) patch.time_mode = t.time_mode;
 if (c.category !== e.category) patch.category = c.category;
 if (c.visibility !== e.visibility) patch.visibility = c.visibility;
 if (c.participants.slice().sort().join() !== e.participants.slice().sort().join()) patch.participants = c.participants;
@@ -1547,7 +1583,7 @@ const t = e.target, card = t.closest('.rcard');
 if (card && t.dataset.f) {
 const [c, mode] = cardFromEl(card);
 applyField(c, t.dataset.f, t.type === 'checkbox' ? t.checked : t.value);
-if (t.dataset.f === 'allDay') { mode === 'edit' ? renderDrawer() : renderAdd(); return; }
+if (t.dataset.f === 'allDay' || t.dataset.f === 'undecided') { mode === 'edit' ? renderDrawer() : renderAdd(); return; }
 refreshCard(card, c, mode); return;
 }
 if (t.dataset.pick) { t.checked ? pick.add(t.dataset.pick) : pick.delete(t.dataset.pick); $('#m-count').textContent = `${pick.size}개 선택됨`; }
@@ -1754,7 +1790,8 @@ case 'card-ex': { const card = el.closest('.rcard'), [c, mode] = cardFromEl(card
 case 'card-fix': {
 const card = el.closest('.rcard'), [c, mode] = cardFromEl(card);
 if (id === 'date-ok') c.dateOk = true; if (id === 'type-ok') c.typeOk = true; if (id === 'dup-ok') c.dupOk = true; if (id === 'nextday') c.nextDay = true;
-if (id === 'allday') { c.allDay = true; mode === 'edit' ? renderDrawer() : renderAdd(); break; }
+if (id === 'allday') { c.allDay = true; c.undecided = false; mode === 'edit' ? renderDrawer() : renderAdd(); break; }
+if (id === 'undecided') { c.undecided = true; c.allDay = false; mode === 'edit' ? renderDrawer() : renderAdd(); break; }
 refreshCard(card, c, mode); break;
 }
 /* 알림 */

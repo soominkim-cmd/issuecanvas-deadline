@@ -370,6 +370,8 @@ main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: m
 .slk-item .cmp { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 2px 8px; font-size: 12.5px; }
 .slk-item .cmp dt { color: var(--muted); }
 .slk-item a.btn { text-decoration: none; }
+.slk-ch { display: grid; gap: 8px; justify-items: start; }
+.slk-chlist { display: grid; gap: 8px; width: 100%; }
 .day-empty { font-size: 11.5px; color: var(--faint); padding: 4px 2px; }
 @media (max-width: 980px) {
 .week { grid-template-columns: minmax(0, 1fr); }
@@ -548,7 +550,7 @@ taskProject: 'all', taskOpen: false,
 week: null, sf: { types: new Set(), people: new Set(), cancelled: false, deadlines: true },
 drawer: null, statusEdit: false, nfilter: 'all', q: '', pop: null, uploading: null,
 add: null,
-slack: [], slackSet: null, slf: 'review', slOpen: null,
+slack: [], slackSet: null, slackCh: [], slf: 'review', slOpen: null,
 };
 
 /* ---------- 도우미 ---------- */
@@ -913,14 +915,15 @@ ${total === 0 ? `<div class="notice"><p>${filtered ? '선택한 조건의 일정
 
 /* ---------- Slack 수집 ---------- */
 const SL_REASON = {
-ai_unavailable: 'AI 분석 실패', not_schedule: '일정 아님', not_candidate: '일정 표현 없음', proposal_or_question: '제안·질문', personal_chat: '개인 대화',
-personal_detail: '개인 사정 포함', not_confirmed: '확정 여부 불분명', date_unclear: '날짜 불분명', date_not_in_text: '날짜 확인 안 됨',
-time_unclear: '시간 불분명', time_not_in_text: '시간 확인 안 됨', no_title: '이름 없음', author_unmapped: '팀원 연결 안 됨',
-party_unclear: '당사자 불분명', past_date: '지난 날짜', possible_duplicate: '중복 가능', change: '변경', cancel: '취소',
-target_unclear: '대상 일정 불분명', edited_after_register: '등록 후 메시지 수정', not_work: '업무 여부 불분명' };
+not_candidate: '일정 표현 없음', quote: '인용한 말', proposal_or_question: '제안·질문', hypothetical: '가정', personal_chat: '사적인 대화',
+not_work: '업무 일정 단어 없음', author_unmapped: '팀원과 연결 안 된 Slack 계정', target_unclear: '바꿀 일정을 하나로 못 정함',
+change_unclear: '바뀐 날짜·시간 없음', change: '기존 일정 변경', cancel: '일정 취소', several_dates: '날짜가 여러 개', several_times: '시간이 여러 개',
+edit_no_schedule: '수정된 메시지에 일정 없음', edit_same: '수정됐지만 일정은 같음', edited_after_register: '등록 뒤 메시지 수정',
+already_registered: '이미 캘린더에 있음', past_date: '지난 날짜', missing: '빠진 정보', not_enough_info: '날짜·시간 부족',
+no_title: '일정 이름 없음', personal_detail: '개인 사정 포함', not_confirmed: '확정 여부 불분명' };
 const slState = r => r.review_state === 'pending' ? 'review' : r.review_state === 'shadow' ? 'shadow'
 : (r.review_state === 'registered' || r.review_state === 'applied') ? (r.decision === 'AUTO' ? 'auto' : 'done')
-: r.review_state === 'ignored' || (r.decision === 'IGNORE' && !(r.reasons || []).includes('not_candidate')) ? 'ignored' : 'other';
+: r.review_state === 'ignored' || r.review_state === 'undone' || (r.decision === 'IGNORE' && !(r.reasons || []).includes('not_candidate')) ? 'ignored' : 'other';
 const SL_TAB = { review: ['확인 필요', 'orange'], auto: ['자동 등록', 'green'], done: ['확인 후 반영', 'blue'], shadow: ['Shadow 기록', 'violet'], ignored: ['무시', 'slate'] };
 function slPropLine(p) {
 if (!p || !p.start_at) return '<span class="sub">날짜·시간을 정하지 못했어요</span>';
@@ -930,7 +933,7 @@ function slItem(r) {
 const st = slState(r), p = r.analysis?.proposal, tg = r.target_event && S.events.find(e => e.id === r.target_event);
 const intent = r.intent === 'cancel' ? '취소' : r.intent === 'change' ? '변경' : r.intent === 'new' ? '새 일정' : '';
 const canDecide = st === 'review' && (r.author_member === S.me.id || isAdmin() || (p?.participants || []).includes(S.me.id));
-const complete = r.intent === 'cancel' ? !!r.target_event : r.intent === 'change' ? !!(r.target_event && p) : !!(p && p.title && (p.participants || []).length);
+const complete = r.review_kind === 'fill' ? false : r.intent === 'cancel' ? !!r.target_event : r.intent === 'change' ? !!(r.target_event && p) : !!(p && p.title && p.start_at && (p.participants || []).length);
 const body = (r.intent === 'change' || r.intent === 'cancel')
 ? `<dl class="cmp"><dt>기존</dt><dd>${tg ? `${esc(evLabel(tg))} · ${esc(evRange(tg))}` : '<span class="sub">대상 일정을 정하지 못했어요</span>'}</dd>${r.intent === 'change' ? `<dt>변경</dt><dd>${slPropLine(p)}</dd>` : ''}</dl>`
 : `<span class="t">${slPropLine(p)}</span>`;
@@ -940,9 +943,9 @@ const ev = r.registered_event || (st === 'done' && r.target_event);
 let acts = '';
 if (canDecide) acts = complete
 ? `<button class="btn small primary" data-act="sl-confirm" data-id="${r.id}">${r.intent === 'cancel' ? '확인 및 취소' : '확인 및 등록'}</button><button class="btn small" data-act="sl-ignore" data-id="${r.id}">무시하기</button>${link}`
-: `<span class="sub">빠진 정보가 있어요. Slack 확인 메시지의 ‘수정하기’에서 채워 주세요.</span><button class="btn small" data-act="sl-ignore" data-id="${r.id}">무시하기</button>${link}`;
+: `<span class="sub">빠진 정보가 있어요. Slack DM의 ‘입력’ 버튼에서 채워 주세요.</span><button class="btn small" data-act="sl-ignore" data-id="${r.id}">무시하기</button>${link}`;
 else acts = `${ev && S.events.some(e => e.id === ev) ? `<button class="btn small" data-act="event" data-id="${ev}">일정 보기</button>` : ''}${link}`;
-return `<article class="slk-item"><div class="r1"><span class="tag c-${SL_TAB[st]?.[1] || 'slate'}">${SL_TAB[st]?.[0] || ''}</span>${intent ? `<span class="tag line">${intent}</span>` : ''}${avatar(r.author_member || '?')}<span>${esc(r.author_member ? nameOf(r.author_member) : 'Slack 사용자')} · ${esc(ago(r.received_at))}</span>${r.deleted ? '<span class="tag line">원문 삭제됨</span>' : ''}</div>
+return `<article class="slk-item"><div class="r1"><span class="tag c-${SL_TAB[st]?.[1] || 'slate'}">${SL_TAB[st]?.[0] || ''}</span>${intent ? `<span class="tag line">${intent}</span>` : ''}${avatar(r.author_member || '?')}<span>${esc(r.author_member ? nameOf(r.author_member) : 'Slack 사용자')} · ${esc(ago(r.received_at))}</span>${r.trigger === 'reaction' ? '<span class="tag line">📅 요청</span>' : ''}${r.review_state === 'undone' ? '<span class="tag line">등록 취소됨</span>' : ''}${r.deleted ? '<span class="tag line">원문 삭제됨</span>' : ''}</div>
 ${body}${r.text ? `<div class="q">${esc(r.text.length > 160 ? r.text.slice(0, 160) + '…' : r.text)}</div>` : ''}${why ? `<div class="why">${st === 'review' ? '확인이 필요한 이유' : '판단 근거'}: ${esc(why)}</div>` : ''}
 ${acts ? `<div class="acts">${acts}</div>` : ''}</article>`;
 }
@@ -963,7 +966,8 @@ const list = by(S.slf);
 const note = S.slf === 'shadow' ? '<p class="sub">자동 등록 조건을 모두 통과했지만, Shadow Mode라서 캘린더에 넣지 않고 기록만 한 메시지예요. 오분류가 없는지 확인한 뒤 자동 등록을 켜세요.</p>' : '';
 return `<section class="sheet slk" aria-label="Slack 수집">${head}
 <div class="chips">${tabs}</div>${note}
-<p class="sub">최근 14일 · ${isAdmin() ? '관리자라서 모든 팀원의 Slack 메시지가 보여요.' : '내가 쓴 Slack 메시지만 보여요.'}</p>
+<p class="sub">최근 14일 · ${isAdmin() ? '관리자라서 모든 팀원의 Slack 메시지가 보여요.' : '내가 쓴 Slack 메시지만 보여요.'} · 하루 확인 질문 최대 ${set ? set.dm_daily_limit : '-'}개</p>
+${isAdmin() && S.slackCh.length ? `<div class="slk-ch"><button class="btn small" data-act="sl-chopen" aria-expanded="${!!S.slChOpen}">채널별 설정 ${S.slChOpen ? '접기' : '보기'}</button>${S.slChOpen ? `<div class="slk-chlist">${S.slackCh.map(c => `<div class="chips"><b>#${esc(c.name || c.channel_id)}</b>${[['collect', '수집'], ['ask', '질문'], ['auto', '자동 등록']].map(([k, t]) => `<button class="fchip" data-act="sl-ch" data-id="${esc(c.channel_id)}" data-k="${k}" aria-pressed="${!!c[k]}">${t} ${c[k] ? '켜짐' : '꺼짐'}</button>`).join('')}</div>`).join('')}<p class="sub">봇을 새 채널에 초대하면 그 채널의 첫 메시지가 올 때 여기에 ‘수집 꺼짐’으로 나타나요. 수집을 켜야 분석과 📅 등록이 동작해요.</p></div>` : ''}</div>` : ''}
 <div class="slk-list">${list.length ? list.map(slItem).join('') : '<span class="sub">해당하는 메시지가 없어요.</span>'}</div></section>`;
 }
 
@@ -1348,10 +1352,12 @@ S.notifs = data;
 }
 async function loadSlack() {
 const [m, st] = await Promise.all([
-sb.from('slack_messages').select('id,channel,ts,text,decision,intent,certainty,reasons,analysis,review_state,permalink,received_at,author_member,registered_event,target_event,deleted,edited_count').not('decision', 'is', null).order('received_at', { ascending: false }).limit(150),
+sb.from('slack_messages').select('id,channel,ts,text,decision,intent,certainty,reasons,analysis,review_state,review_kind,trigger,permalink,received_at,author_member,registered_event,target_event,deleted,edited_count').not('decision', 'is', null).order('received_at', { ascending: false }).limit(150),
 sb.from('slack_settings').select('*').eq('id', 1).maybeSingle()]);
 if (m.error) throw m.error;
 S.slack = m.data || []; S.slackSet = st.data || null;
+const ch = await sb.from('slack_channels').select('*').order('name');
+S.slackCh = ch.data || [];
 }
 const loaders = { docs: () => Promise.all(['issues', 'milestones', 'comments'].map(loadDocs)), members: loadMembers, events: loadEvents, notifs: loadNotifs, slack: loadSlack };
 const pending = {};
@@ -1762,6 +1768,14 @@ const { data, error } = await sb.rpc('slack_review_action', { p_msg: +id, p_acti
 if (error) { el.disabled = false; toast({ forbidden: '처리할 권한이 없어요.', incomplete: '빠진 정보가 있어요. Slack에서 수정해 주세요.', no_target: '대상 일정을 정하지 못했어요. Slack에서 골라 주세요.' }[error.message] || '처리하지 못했어요. 다시 시도해 주세요.'); break; }
 toast(a === 'sl-ignore' ? '무시했어요' : data && data.already ? '이미 처리된 메시지예요' : '반영했어요');
 await Promise.all([loadSlack(), loadEvents()]); render(); break;
+}
+case 'sl-chopen': S.slChOpen = !S.slChOpen; render(); break;
+case 'sl-ch': {
+const c = S.slackCh.find(x => x.channel_id === id), k = el.dataset.k;
+if (!c) break;
+const { error } = await sb.rpc('set_slack_settings', { p: { channel: { id, [k]: !c[k] } } });
+if (error) { toast('설정을 바꾸지 못했어요'); break; }
+await loadSlack(); render(); break;
 }
 case 'sl-auto': {
 const on = !(S.slackSet && S.slackSet.auto_register);

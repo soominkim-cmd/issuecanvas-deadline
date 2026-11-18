@@ -1109,16 +1109,16 @@ return addDays(from, 1);
 const MSTATUS2 = { '업무 중': 'green', '회의 중': 'violet', '외근 중': 'orange', '수업 중': 'blue', '개인 일정': 'slate', '휴가·부재 중': 'pink', '근무 예정': 'sky', '근무 외': 'slate', '상태 미확인': 'line' };
 const OLD_ST = { 근무중: '업무 중', 재택근무: '업무 중', 외근중: '외근 중', 회의중: '회의 중', 휴가: '휴가·부재 중', 자리비움: '휴가·부재 중' };
 const OUT_RE = /외근|출장|방문|현장|행사|박람회|컨퍼런스|전시/;
-// 판단 순서: 직접 설정(오늘) > 휴가·부재 일정 > 진행 중인 회의·외근 일정 > 오늘 휴무 > 근무시간(체크인·패턴) > 상태 미확인
+// 판단 순서: 직접 설정(오늘) > 지금 진행 중인 일정(부재·회의·외근·수업·개인) > 오늘 휴무 > 근무시간(등록된 경우) > 일정이 없으면 업무 중
 function autoStatus(m, nowMs = Date.now()) {
 const day = today(), nowMin = nowMinKst(nowMs);
 if (m.status_mode === 'manual' && m.status_at && kst(m.status_at).date === day) {
 const s = OLD_ST[m.status] || m.status;
 if (MSTATUS2[s] && s !== '상태 미확인') return { s, why: '직접 설정', manual: true };
 }
-// 일정이 진행 중이라는 것만 알려 준다. 시간이 불확실한 일정(오전·오후만, 시간 미정, 확인 필요)은 상태를 바꾸지 않는다.
-// 종료 시간을 모르는 일정은 상태 표시에만 시작 후 1시간까지 반영한다 (일정 자체의 종료 시간으로 저장하지 않음).
-const evs = evOn(day).filter(e => e.participants.includes(m.id) && !isUnd(e) && !isPart(e) && !needsCheck(e));
+// 등록된 일정 시간에는 일정 유형에 따라 상태를 바꾸고, 일정이 없는 시간은 업무 중으로 본다.
+// 시간 미정 일정은 언제인지 몰라 상태를 바꾸지 않는다. 종료 시간을 모르는 일정은 상태 표시에만 시작 후 1시간까지 반영한다.
+const evs = evOn(day).filter(e => e.participants.includes(m.id) && !isUnd(e));
 const endMs = e => isOpenEnd(e) ? (e.est_end_at ? new Date(e.est_end_at).getTime() : new Date(e.start_at).getTime() + 3600e3) : new Date(e.end_at).getTime();
 const nowEv = evs.filter(e => e.all_day || (new Date(e.start_at).getTime() <= nowMs && nowMs < endMs(e)));
 const why = e => `${e.all_day ? '종일' : evTime(e, day)} ${evLabel(e)}${isOpenEnd(e) && !e.est_end_at ? ' (종료 시간 미정)' : ''} · 일정 기준`;
@@ -1139,7 +1139,7 @@ if (nowMin < hm(w.start)) return { s: '근무 예정', why: `${w.start} 시작` 
 if (nowMin >= hm(w.end)) return { s: '근무 외', why: `${w.end} 근무 끝` };
 return { s: '업무 중', why: p && p.status === 'checked_in' ? '오늘 체크인 기준' : `근무시간 ${w.start}–${w.end} 기준` };
 }
-return { s: '상태 미확인', why: '근무 패턴과 진행 중인 일정이 없어요' };
+return { s: '업무 중', why: '지금 진행 중인 일정이 없어요' };
 }
 const stTag = s => `<span class="tag ${MSTATUS2[s] === 'line' ? 'line' : 'c-' + (MSTATUS2[s] || 'slate')}">${esc(s)}</span>`;
 

@@ -530,6 +530,92 @@ textarea { resize: vertical; min-height: 66px; }
 .login .err { color: var(--red-text); font-size: 13px; }
 .login .btn { width: 100%; padding: 10px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 100; max-width: calc(100vw - 32px); background: var(--primary); color: var(--on-primary); padding: 9px 15px; border-radius: 9px; font-size: 13px; }
+
+/* 팀 일정 3탭 */
+.sv-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 4px; background: var(--sunken); border-radius: 12px; }
+.sv-tabs button { display: grid; gap: 1px; padding: 9px 12px; border-radius: 9px; text-align: left; color: var(--muted); min-width: 0; }
+.sv-tabs button b { font-size: 14px; font-weight: 600; color: inherit; }
+.sv-tabs button span { font-size: 11.5px; }
+.sv-tabs button[aria-selected="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(10, 20, 60, .12); }
+@media (max-width: 560px) { .sv-tabs button span { display: none; } .sv-tabs button b { font-size: 12.5px; } }
+.ev.open { background-image: linear-gradient(90deg, transparent 60%, var(--surface)); }
+.ev.chk { outline: 1.5px dashed var(--orange); outline-offset: -1.5px; }
+.ev .pv { font-size: 10.5px; color: var(--muted); }
+.mgrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.mgrid .dow { padding: 6px 8px; font-size: 12px; color: var(--muted); background: var(--sunken); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.mcell { min-height: 112px; padding: 5px; display: grid; gap: 3px; align-content: start; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); min-width: 0; }
+.mcell.out { background: var(--sunken); }
+.mcell.out .num { color: var(--faint); }
+.mcell.today .num { background: var(--navy); color: var(--on-navy); }
+.mcell .num { justify-self: start; font-size: 12.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; }
+.mcell .dl, .mchip { font-size: 11px; line-height: 1.35; padding: 2px 5px; border-radius: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; min-width: 0; }
+.mchip { background: var(--cb); color: var(--fg); }
+.mchip b { color: var(--c); font-weight: 600; margin-right: 4px; }
+.mchip.und { background: transparent; outline: 1px dashed var(--c); outline-offset: -1px; }
+.mcell .more { font-size: 11px; color: var(--muted); text-align: left; }
+@media (max-width: 720px) { .mcell { min-height: 72px; } .mchip, .mcell .dl { font-size: 10px; } .mchip b { display: none; } }
+.chk-list { padding: 12px 14px; display: grid; gap: 8px; }
+.chk-list .stack { display: grid; gap: 6px; }
+/* 가용 시간 타임라인 */
+.avl2 { padding: 12px 14px; display: grid; gap: 10px; }
+.av-scroll { overflow-x: auto; }
+.av-grid { min-width: 720px; display: grid; gap: 6px; }
+.av-row { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px; align-items: stretch; }
+.av-who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.av-who span { display: grid; min-width: 0; }
+.av-who b { font-size: 13px; }
+.av-who small { font-size: 11px; color: var(--muted); }
+.av-who small.warn { color: var(--amber); }
+.av-hours { position: relative; height: 18px; }
+.av-hours span { position: absolute; transform: translateX(-50%); font-size: 11px; color: var(--faint); }
+.av-track { position: relative; min-height: 46px; border-radius: 8px; background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 17 - 1px), var(--line) calc(100% / 17 - 1px) calc(100% / 17)); background-color: var(--sunken); }
+.av-track.no-work { background-color: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.av-work { position: absolute; top: 0; bottom: 0; background: var(--green-bg); border-bottom: 3px solid var(--green); border-radius: 6px; }
+.avb { position: absolute; top: 5px; bottom: 5px; border-radius: 6px; padding: 2px 6px; background: var(--cb); box-shadow: inset 3px 0 0 var(--c); display: grid; align-content: center; overflow: hidden; min-width: 6px; text-align: left; }
+.avb b { font-size: 11.5px; font-weight: 560; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.avb span { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.avb.t-est { background-image: repeating-linear-gradient(135deg, transparent 0 6px, rgba(255,255,255,.35) 6px 9px); }
+.avb.t-open { background: linear-gradient(90deg, var(--cb) 40%, transparent); }
+.avb.t-part { background: repeating-linear-gradient(135deg, var(--cb) 0 7px, transparent 7px 12px); box-shadow: inset 0 0 0 1px var(--c); }
+.avb.chk { outline: 1.5px dashed var(--orange); outline-offset: -1.5px; }
+@media (max-width: 560px) { .av-row { grid-template-columns: 96px minmax(0, 1fr); gap: 6px; } .av-grid { min-width: 620px; } .av-who .av { display: none; } }
+.av-now { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--red); border-radius: 2px; z-index: 2; }
+.av-tags { position: absolute; left: 4px; top: 3px; display: flex; gap: 4px; flex-wrap: wrap; z-index: 1; }
+.avtag { font-size: 10.5px; padding: 1px 6px; border-radius: 999px; background: var(--cb); color: var(--fg); box-shadow: inset 0 0 0 1px var(--c); }
+.avtag.und { background: var(--surface); box-shadow: inset 0 0 0 1px var(--c); border: 0; outline: 1px dashed var(--c); }
+.av-legend i.lg-work { background: var(--green-bg); box-shadow: inset 0 -3px 0 var(--green); }
+.av-legend i.lg-est { background: repeating-linear-gradient(135deg, var(--slate-bg) 0 3px, transparent 3px 5px); box-shadow: inset 0 0 0 1px var(--slate); }
+.av-legend i.lg-part { background: repeating-linear-gradient(135deg, var(--slate) 0 2px, transparent 2px 5px); }
+.av-legend i.lg-chk { background: transparent; outline: 1.5px dashed var(--orange); }
+/* Find a Time */
+.ft { padding: 14px; display: grid; gap: 12px; }
+.ft-ctl { display: grid; gap: 10px; }
+.ft-ctl .fl { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.ft-ctl .fl > span:first-child { font-size: 12px; color: var(--muted); }
+.ft-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.ft label.f { display: grid; gap: 3px; font-size: 11.5px; color: var(--muted); }
+.ft label.f input, .ft label.f select { padding: 6px 8px; font-size: 13px; color: var(--fg); }
+.ft-res { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.ft-list { display: grid; gap: 6px; margin-top: 6px; }
+.ft-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; }
+.ft-strip { display: grid; gap: 4px; overflow-x: auto; }
+.ft-day { display: grid; grid-template-columns: 70px minmax(560px, 1fr); gap: 8px; align-items: center; }
+.ft-d { font-size: 12px; color: var(--muted); }
+.ft-cells { display: flex; gap: 1px; height: 16px; position: relative; }
+.ft-axis .ft-cells span { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: var(--faint); }
+.ft-cells i { flex: 1; border-radius: 2px; }
+.ft-ok, i.ft-ok { background: var(--green); }
+.ft-free, i.ft-free { background: var(--blue); opacity: .55; }
+.ft-unknown, i.ft-unknown { background: repeating-linear-gradient(135deg, var(--amber) 0 3px, transparent 3px 6px); }
+.ft-conflict, i.ft-conflict { background: var(--red-soft); }
+i.ft-past { background: var(--sunken); }
+.legend i.ft-ok { background: var(--green); } .legend i.ft-free { background: var(--blue); opacity: .55; } .legend i.ft-conflict { background: var(--red-soft); box-shadow: inset 0 0 0 1px var(--red); }
+.rc-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr) minmax(0, 1.1fr) repeat(2, minmax(0, .9fr)); }
+.rc-grid2 { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
+.rc-grid .tf-note { align-self: end; padding-bottom: 8px; grid-column: span 2; }
+.rcard .scope-hint { font-size: 11.5px; margin: -4px 0 0; }
+.rcard label.pubt { max-width: 320px; }
+@media (max-width: 720px) { .rc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rc-grid .wide { grid-column: 1 / -1; } .rc-grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous"></script>
 </head>
@@ -586,7 +672,16 @@ const IST_ORDER = ['open', 'progress', 'review', 'resolved'];
 const PRIO = { urgent: ['긴급', 'red', 0], high: ['높음', 'orange', 1], normal: ['보통', '', 2], low: ['낮음', 'slate', 3] };
 const IST_ERR = { forbidden: '담당자, 등록자, 관리자만 상태를 바꿀 수 있어요.', qa_required: '검증이 필요한 이슈예요. 먼저 ‘확인 대기’로 올린 뒤 해결 완료로 바꿔 주세요.', note_required: '재오픈하는 이유를 적어 주세요.', conflict: '다른 사람이 먼저 상태를 바꿨어요. 화면을 새로 고쳤어요.', bad_transition: '지금 상태에서는 그 단계로 바로 바꿀 수 없어요.' };
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
-const ECAT = { business: ['비즈니스 이벤트', 'blue'], external_meeting: ['외근·미팅', 'violet'], absence: ['부재', 'amber'], vacation: ['휴가', 'green'], personal: ['개인 일정', 'pink'], other: ['기타', 'cyan'] };
+// 일정 유형 6종 (absence·other 는 예전 일정과 '시간만 공개' 표시용)
+const ECAT = { team_meeting: ['팀 회의', 'green'], business: ['비즈니스', 'blue'], external_meeting: ['외근·출장', 'orange'], class: ['수업', 'violet'], personal: ['개인 일정', 'slate'], vacation: ['휴가·부재', 'red'], absence: ['부재', 'red'], other: ['기타', 'slate'] };
+const KINDS6 = ['team_meeting', 'business', 'external_meeting', 'class', 'personal', 'vacation'];
+const TEAM_KINDS = ['team_meeting', 'business', 'external_meeting'];
+// 공개 범위: 유형과 따로 관리한다. 서버는 상세(제목·메모·원본 링크·실제 유형)를 권한 있는 사람에게만 내려준다.
+const SCOPE = { detail: ['상세 공개', '모든 팀원에게 제목과 시간이 보여요.'], limited: ['참석자에게만 상세', '참석자에게는 제목까지, 다른 팀원에게는 유형과 시간만 보여요.'],
+type: ['유형만 공개', '팀원에게는 ‘수업’, ‘개인 일정’처럼 유형과 시간만 보여요.'], time: ['시간만 공개', '팀원에게는 ‘부재’와 시간만 보여요.'], self: ['본인만', '다른 팀원에게는 보이지 않아요. 내 일정에서만 보여요.'] };
+const FLEX = { unknown: '미확인', flexible: '조율 가능', fixed: '조율 불가' };
+const TMODE = { timed: '시작·종료 확정', start_only: '시작 시간만 확정', part_of_day: '오전·오후만 확인', undecided: '시간 미정', all_day: '종일' };
+const ATT = { going: ['참석 예정', 'green'], online: ['온라인 참석', 'blue'], maybe: ['참석 미확인', 'slate'], declined: ['불참', 'red'] };
 const VIS = { team: ['팀 공개', '모든 팀원에게 제목까지 보여요.'], limited: ['제한 공개', '팀원에게는 유형·시간·관련 인물만, 관련 인물에게는 제목까지 보여요.'], private: ['비공개', '다른 팀원에게는 개인 일정과 시간만 보여요.'] };
 const MSTATUS = { 근무중: 'green', 외근중: 'orange', 회의중: 'violet', 재택근무: 'sky', 휴가: 'pink', 자리비움: 'slate' };
 const AV_C = ['blue', 'violet', 'green', 'pink', 'cyan', 'orange', 'sky', 'lime', 'amber'];
@@ -611,6 +706,7 @@ load: 'loading', route: 'dashboard', from: 'dashboard',
 month: null, kind: 'all', project: 'all', openOnly: false, sel: { type: 'home' }, confirm: null,
 taskProject: 'all', taskOpen: false, taskSt: 'all', stNote: '',
 week: null, sf: { types: new Set(), people: new Set(), cancelled: false, deadlines: true },
+sv: 'team', calMode: 'week', calMonth: null, avDay: null, avPeople: new Set(), ft: { people: new Set(), from: '', to: '', dur: 60 },
 drawer: null, statusEdit: false, nfilter: 'all', q: '', pop: null, uploading: null,
 add: null,
 slack: [], slackSet: null, slackCh: [], slf: 'review', slOpen: null,
@@ -670,16 +766,32 @@ const creatorName = x => x.creator ? nameOf(x.creator) : (x.exampleCreator || '�
 const canManage = x => isAdmin() || (!!S.me && x.creator === S.me.id);
 
 /* ---------- 팀 일정 판정 ---------- */
-const evLabel = e => e.title != null ? e.title : (e.visibility === 'private' ? '개인 일정' : ECAT[e.category][0]);
-const evColor = e => ECAT[e.category][1];
+const evKind = e => (e.kind && ECAT[e.kind]) ? e.kind : (ECAT[e.category] ? e.category : 'other');
+const kindLabel = e => ECAT[evKind(e)][0];
+const timeOnly = e => e.visibility !== 'team' && e.share === 'time';
+const evLabel = e => e.title != null ? e.title : (timeOnly(e) ? '부재' : (e.public_title || kindLabel(e)));
+const evColor = e => ECAT[evKind(e)][1];
+const scopeOf = e => e.visibility === 'team' ? 'detail' : e.visibility === 'limited' ? 'limited' : (e.share || 'type');
+const scopeVis = sc => sc === 'detail' ? { visibility: 'team', share: 'type' } : sc === 'limited' ? { visibility: 'limited', share: 'type' } : { visibility: 'private', share: sc };
+const defaultScope = k => ['personal', 'class', 'vacation', 'absence'].includes(k) ? 'type' : 'detail';
+// 다른 팀원에게 보이는 이름 (내 일정에서 미리 보기용)
+const pubText = e => e.visibility === 'team' ? evLabel(e) : e.share === 'self' ? '보이지 않음' : e.share === 'time' ? '부재' : (e.public_title || kindLabel(e));
+const isOpenEnd = e => e.time_mode === 'start_only';
+const isPart = e => e.time_mode === 'part_of_day';
+const needsCheck = e => e.confirm === 'needs_check';
+const evMine = e => !!S.me && (e.created_by === S.me.id || e.participants.includes(S.me.id));
+const isTeamEv = e => TEAM_KINDS.includes(evKind(e)) && e.visibility !== 'private';
+const partLabel = e => e.day_part === 'am' ? '오전' : '오후';
 const evEnd = e => { const en = kst(e.end_at); return e.all_day ? addDays(en.date, -1) : (en.time === '00:00' ? addDays(en.date, -1) : en.date); };
 function evDays(e) { const s = kst(e.start_at).date, end = evEnd(e), out = []; for (let d = s; d <= end && out.length < 60; d = addDays(d, 1)) out.push(d); return out; }
 const isUnd = e => e.time_mode === 'undecided';
-const tmRank = e => e.all_day ? 0 : isUnd(e) ? 1 : 2;
+const tmRank = e => e.all_day ? 0 : isUnd(e) ? 1 : isPart(e) ? 2 : 3;
 function evTime(e, day) {
 if (isUnd(e)) return '시간 미정';
 if (e.all_day) return '종일';
+if (isPart(e)) return `${partLabel(e)} · 세부 시간 미정`;
 const s = kst(e.start_at), en = kst(e.end_at), end = evEnd(e);
+if (isOpenEnd(e)) return `${s.time}~ ${e.est_end_at ? `예상 ${kst(e.est_end_at).time}` : '종료 미정'}`;
 if (s.date === end) return `${s.time}–${en.time}`;
 if (day === s.date) return `${s.time}~`;
 if (day === end) return `~${en.time}`;
@@ -688,9 +800,22 @@ return '종일';
 function evRange(e) {
 const s = kst(e.start_at), end = evEnd(e);
 if (isUnd(e)) return `${full(s.date)} · 시간 미정`;
+if (isPart(e)) return `${full(s.date)} · ${partLabel(e)} (세부 시간 미정)`;
+if (isOpenEnd(e)) return `${full(s.date)} · ${s.time} 시작 · ${e.est_end_at ? `예상 종료 ${kst(e.est_end_at).time} (확정 아님)` : '종료 시간 미정'}`;
 if (e.all_day) return s.date === end ? `${full(s.date)} · 종일` : `${full(s.date)} ~ ${full(end)} · 종일`;
 const en = kst(e.end_at);
 return s.date === end ? `${full(s.date)} · ${s.time}–${en.time}` : `${full(s.date)} ${s.time} ~ ${full(end)} ${en.time}`;
+}
+function evSpan(e, day) {
+if (e.all_day) return { a: 0, b: 1440, t: 'all' };
+if (isUnd(e)) return { a: null, b: null, t: 'und' };
+const s = kst(e.start_at), a = s.date < day ? 0 : hm(s.time);
+if (isOpenEnd(e)) {
+if (e.est_end_at) { const x = kst(e.est_end_at); return { a, b: x.date > day ? 1440 : hm(x.time), t: 'est' }; }
+return { a, b: 1440, t: 'open' };
+}
+const en = kst(e.end_at);
+return { a, b: en.date > day ? 1440 : hm(en.time), t: isPart(e) ? 'part' : 'busy' };
 }
 const canEditEv = e => !!S.me && (e.created_by === S.me.id || (isAdmin() && e.visibility === 'team'));
 const evOn = (day, opts = {}) => S.events.filter(e => (opts.cancelled || e.status === 'active') && evDays(e).includes(day))
@@ -708,7 +833,7 @@ const ipill = i => { const [t, c] = istatus(i); return `<span class="tag ${c ? '
 const exTag = x => x.example ? '<span class="tag ex">예시</span>' : '';
 const projTag = p => `<span class="tag c-${PROJ_C[p] || 'slate'}">${esc(p)}</span>`;
 const catTag = c => `<span class="tag c-${CAT_C[c] || 'slate'}">${esc(c)}</span>`;
-const evTag = e => `<span class="tag c-${evColor(e)}">${ECAT[e.category][0]}</span>`;
+const evTag = e => `<span class="tag c-${evColor(e)}">${kindLabel(e)}</span>`;
 const issueRow = i => `<button class="row" data-act="issue" data-id="${esc(i.id)}">
 <span class="r1"><span class="code">${esc(i.code)}</span>${prioTag(i)}${projTag(i.project)}${exTag(i)}</span>
 <span class="t">${esc(i.title)}</span>
@@ -726,13 +851,13 @@ function miniEv(e, showDate) {
 const s = kst(e.start_at);
 return `<button class="mini-ev c-${evColor(e)}${isUnd(e) ? ' und' : ''}" data-act="event" data-id="${e.id}">
 <span class="when">${showDate ? md(s.date) + ' ' : ''}${evTime(e, s.date)}</span><span class="what">${esc(evLabel(e))}</span>
-<span class="who">${avs(e.participants)}<span>${esc(e.participants.map(nameOf).join(', '))} · ${ECAT[e.category][0]}</span></span></button>`;
+<span class="who">${avs(e.participants)}<span>${esc(e.participants.map(nameOf).join(', '))} · ${kindLabel(e)}</span></span></button>`;
 }
 const emptyBox = (t, s, extra = '') => `<div class="empty"><strong>${esc(t)}</strong><span>${esc(s)}</span>${extra}</div>`;
 function relatedHTML(date) {
 if (!date) return '<div class="rel"><span class="sub">날짜를 고르면 그날 팀 일정을 함께 보여 드려요.</span></div>';
 const evs = evOn(date);
-const lines = evs.map(e => `<div class="rl">${avs(e.participants)}<b>${esc(e.participants.map(nameOf).join(', '))}</b><span>${evTime(e, date)}</span><span class="tag c-${evColor(e)}">${ECAT[e.category][0]}</span><span>${esc(evLabel(e))}</span></div>`).join('');
+const lines = evs.map(e => `<div class="rl">${avs(e.participants)}<b>${esc(e.participants.map(nameOf).join(', '))}</b><span>${evTime(e, date)}</span><span class="tag c-${evColor(e)}">${kindLabel(e)}</span><span>${esc(evLabel(e))}</span></div>`).join('');
 return `<div class="rel"><div class="sec"><span>${md(date)} 팀 일정 ${evs.length}건</span><button type="button" class="btn link" data-act="rel-week" data-id="${date}">주간 일정에서 보기</button></div>
 ${lines || '<span class="sub">이 날짜에 등록된 팀 일정이 없어요. 일정이 없다고 모두 가능하다는 뜻은 아니에요.</span>'}
 ${evs.length ? '<span class="sub">참고용 정보예요. 마감 저장을 막지 않아요.</span>' : ''}</div>`;
@@ -869,10 +994,10 @@ return `<div class="avl" aria-label="오늘 가용성"><div class="sec">오늘 �
 function weekCard() {
 const t0 = weekStart(today()), t1 = addDays(t0, 6), now = Date.now();
 const evs = S.events.filter(e => e.status === 'active' && kst(e.start_at).date <= t1 && evEnd(e) >= t0);
-const cnt = k => evs.filter(e => k.includes(e.category)).length;
+const cnt = k => evs.filter(e => k.includes(evKind(e))).length;
 const up = evs.filter(e => new Date(e.end_at).getTime() >= now).sort((a, b) => a.start_at.localeCompare(b.start_at)).slice(0, 5);
 return `<section class="sheet panel" aria-label="이번 주 팀 일정"><div class="sec-title">이번 주 팀 일정<small>${md(t0)} – ${md(t1)}</small></div>
-${evs.length ? `<div class="counts"><span class="tag c-blue">비즈니스 ${cnt(['business'])}</span><span class="tag c-violet">외근·미팅 ${cnt(['external_meeting'])}</span><span class="tag c-amber">부재·휴가 ${cnt(['absence', 'vacation'])}</span><span class="tag c-pink">개인 ${cnt(['personal'])}</span></div>
+${evs.length ? `<div class="counts"><span class="tag c-green">팀 회의 ${cnt(['team_meeting'])}</span><span class="tag c-blue">비즈니스 ${cnt(['business'])}</span><span class="tag c-orange">외근·출장 ${cnt(['external_meeting'])}</span><span class="tag c-violet">수업 ${cnt(['class'])}</span><span class="tag c-red">휴가·부재 ${cnt(['absence', 'vacation'])}</span><span class="tag c-slate">개인 ${cnt(['personal'])}</span></div>
 <div class="stack">${up.map(e => miniEv(e, true)).join('') || '<span class="sub">이번 주 남은 일정이 없어요.</span>'}</div>
 <button class="btn small" data-act="nav" data-id="schedule">팀 일정 전체 보기</button>`
 : emptyBox('등록된 팀 일정이 없습니다', '외근·부재·외부 미팅을 등록하면 여기에 모여요.', '<button class="btn small primary" data-act="add-open" data-id="bulk">일정 추가</button>')}</section>`;
@@ -914,7 +1039,7 @@ const tm = s.time_mode; let st, en;
 if (tm === 'timed') { st = toIso(d, s.start_time.slice(0, 5)); en = toIso(s.end_time > s.start_time ? d : addDays(d, 1), s.end_time.slice(0, 5)); }
 else { st = toIso(d, '00:00'); en = toIso(addDays(d, 1), '00:00'); }
 return { id: `s:${s.id}:${d}`, virtual: true, series_id: s.id, series_date: d, series: s, start_at: new Date(st).toISOString(), end_at: new Date(en).toISOString(),
-all_day: tm === 'all_day', time_mode: tm, category: s.category, visibility: s.visibility, participants: s.participants, created_by: s.created_by, updated_by: s.updated_by,
+all_day: tm === 'all_day', time_mode: tm, category: s.category, kind: s.kind || null, visibility: s.visibility, share: s.share || 'type', public_title: s.public_title || null, flex: s.flex || 'unknown', confirm: 'confirmed', participants: s.participants, created_by: s.created_by, updated_by: s.updated_by,
 created_at: s.created_at, updated_at: s.updated_at, status: 'active', version: s.version, title: s.title, note: s.note, source: 'series' };
 }
 const ruleText = s => {
@@ -955,8 +1080,8 @@ const minutes = p && p.minutes_override != null ? p.minutes_override : Math.max(
 return { start: start.slice(0, 5), end: end.slice(0, 5), brk, minutes, src: p && (p.work_start || p.minutes_override != null) ? 'plan' : 'pattern' };
 }
 function busyBlocks(id, day) {
-return evOn(day).filter(e => e.participants.includes(id) && !e.all_day && !isUnd(e))
-.map(e => { const s = kst(e.start_at), en = kst(e.end_at); return [s.date < day ? 0 : hm(s.time), en.date > day ? 1440 : hm(en.time), e]; });
+return evOn(day).filter(e => e.participants.includes(id) && !e.all_day && !needsCheck(e))
+.map(e => [evSpan(e, day), e]).filter(([sp]) => sp.t === 'busy' || sp.t === 'est').map(([sp, e]) => [sp.a, sp.b, e]);
 }
 // 예정 근무시간, 일정에 쓰이는 시간, 남은 가용 시간 (분)
 function availability(id, day = today(), nowMin = null) {
@@ -981,7 +1106,7 @@ return addDays(from, 1);
 }
 
 /* ---------- 팀원 상태 (자동) ---------- */
-const MSTATUS2 = { '업무 중': 'green', '회의 중': 'violet', '외근 중': 'orange', '휴가·부재 중': 'pink', '근무 예정': 'sky', '근무 외': 'slate', '상태 미확인': 'line' };
+const MSTATUS2 = { '업무 중': 'green', '회의 중': 'violet', '외근 중': 'orange', '수업 중': 'blue', '개인 일정': 'slate', '휴가·부재 중': 'pink', '근무 예정': 'sky', '근무 외': 'slate', '상태 미확인': 'line' };
 const OLD_ST = { 근무중: '업무 중', 재택근무: '업무 중', 외근중: '외근 중', 회의중: '회의 중', 휴가: '휴가·부재 중', 자리비움: '휴가·부재 중' };
 const OUT_RE = /외근|출장|방문|현장|행사|박람회|컨퍼런스|전시/;
 // 판단 순서: 직접 설정(오늘) > 휴가·부재 일정 > 진행 중인 회의·외근 일정 > 오늘 휴무 > 근무시간(체크인·패턴) > 상태 미확인
@@ -991,14 +1116,22 @@ if (m.status_mode === 'manual' && m.status_at && kst(m.status_at).date === day) 
 const s = OLD_ST[m.status] || m.status;
 if (MSTATUS2[s] && s !== '상태 미확인') return { s, why: '직접 설정', manual: true };
 }
-const evs = evOn(day).filter(e => e.participants.includes(m.id) && !isUnd(e));
-const nowEv = evs.filter(e => e.all_day || (new Date(e.start_at).getTime() <= nowMs && nowMs < new Date(e.end_at).getTime()));
-const away = nowEv.find(e => ['vacation', 'absence'].includes(e.category) || (e.category === 'personal' && !e.all_day));
-if (away) return { s: '휴가·부재 중', why: `${away.all_day ? '종일' : evTime(away, day)} ${evLabel(away)}` };
-const meet = nowEv.find(e => !e.all_day && ['external_meeting', 'business'].includes(e.category));
-if (meet) return { s: OUT_RE.test(meet.title || '') ? '외근 중' : '회의 중', why: `${evTime(meet, day)} ${evLabel(meet)}` };
-const out = nowEv.find(e => e.all_day && ['external_meeting', 'business'].includes(e.category));
-if (out) return { s: '외근 중', why: `종일 ${evLabel(out)}` };
+// 일정이 진행 중이라는 것만 알려 준다. 시간이 불확실한 일정(오전·오후만, 시간 미정, 확인 필요)은 상태를 바꾸지 않는다.
+// 종료 시간을 모르는 일정은 상태 표시에만 시작 후 1시간까지 반영한다 (일정 자체의 종료 시간으로 저장하지 않음).
+const evs = evOn(day).filter(e => e.participants.includes(m.id) && !isUnd(e) && !isPart(e) && !needsCheck(e));
+const endMs = e => isOpenEnd(e) ? (e.est_end_at ? new Date(e.est_end_at).getTime() : new Date(e.start_at).getTime() + 3600e3) : new Date(e.end_at).getTime();
+const nowEv = evs.filter(e => e.all_day || (new Date(e.start_at).getTime() <= nowMs && nowMs < endMs(e)));
+const why = e => `${e.all_day ? '종일' : evTime(e, day)} ${evLabel(e)}${isOpenEnd(e) && !e.est_end_at ? ' (종료 시간 미정)' : ''} · 일정 기준`;
+const away = nowEv.find(e => ['vacation', 'absence'].includes(evKind(e)));
+if (away) return { s: '휴가·부재 중', why: why(away) };
+const meet = nowEv.find(e => !e.all_day && ['team_meeting', 'business'].includes(evKind(e)));
+if (meet) return { s: OUT_RE.test(meet.title || '') ? '외근 중' : '회의 중', why: why(meet) };
+const out = nowEv.find(e => evKind(e) === 'external_meeting' || (e.all_day && evKind(e) === 'business'));
+if (out) return { s: '외근 중', why: why(out) };
+const cls = nowEv.find(e => !e.all_day && evKind(e) === 'class');
+if (cls) return { s: '수업 중', why: why(cls) };
+const pers = nowEv.find(e => !e.all_day && evKind(e) === 'personal');
+if (pers) return { s: '개인 일정', why: why(pers) };
 const w = dayWork(m.id, day), p = planOf(m.id, day);
 if (w.off) return { s: '근무 외', why: w.why };
 if (w.start) {
@@ -1030,7 +1163,7 @@ return S.events.filter(e => e.status === 'active' && e.participants.includes(id)
 && (isUnd(e) ? kst(e.start_at).date >= t : e.all_day ? kst(e.start_at).date > t : new Date(e.start_at).getTime() > nowMs)).sort((a, b) => a.start_at.localeCompare(b.start_at))[0] || null;
 }
 // 카드에 보이는 상태는 다섯 가지로 묶는다 (근무시간 밖·휴무·휴가는 '부재')
-const CARD_ST = { '업무 중': ['업무 중', 'green'], '회의 중': ['회의 중', 'violet'], '외근 중': ['외근 중', 'orange'], '휴가·부재 중': ['부재', 'slate'], '근무 예정': ['부재', 'slate'], '근무 외': ['부재', 'slate'], '상태 미확인': ['상태 미확인', 'line'] };
+const CARD_ST = { '업무 중': ['업무 중', 'green'], '회의 중': ['회의 중', 'violet'], '외근 중': ['외근 중', 'orange'], '수업 중': ['수업 중', 'blue'], '개인 일정': ['개인 일정', 'slate'], '휴가·부재 중': ['부재', 'slate'], '근무 예정': ['부재', 'slate'], '근무 외': ['부재', 'slate'], '상태 미확인': ['상태 미확인', 'line'] };
 // 현재 업무: 직접 고른 업무 > 오늘 체크인의 최우선 업무 > 체크인에서 고른 업무 중 아직 안 끝난 첫 번째.
 // 일정(회의·외근·부재)은 상태만 바꾸고 업무는 건드리지 않는다. 끝난 이슈·업무는 표시하지 않는다.
 function currentWork(m) {
@@ -1289,38 +1422,188 @@ ${acts}${log ? `<div class="ilog"><div class="sec">상태 기록</div>${log}</di
 }
 
 /* ---------- 팀 일정 (주간) ---------- */
-function scheduleView() {
-const w0 = S.week, w1 = addDays(w0, 6), t = today(), f = S.sf;
-const typeChip = k => `<button class="fchip c-${ECAT[k][1]}" data-act="sf-type" data-id="${k}" aria-pressed="${f.types.has(k)}">${ECAT[k][0]}</button>`;
-const pChip = m => `<button class="fchip" data-act="sf-person" data-id="${m.id}" aria-pressed="${f.people.has(m.id)}">${avatar(m.id)}${esc(m.name)}</button>`;
-const pass = e => (f.cancelled || e.status === 'active') && (!f.types.size || f.types.has(e.category)) && (!f.people.size || e.participants.some(p => f.people.has(p)));
-const filtered = f.types.size || f.people.size;
-let total = 0, cols = '';
+function evBtn(e, d, opts = {}) {
+const masked = e.title == null;
+return `<button class="ev c-${evColor(e)}${isUnd(e) || isPart(e) ? ' und' : ''}${isOpenEnd(e) ? ' open' : ''}${needsCheck(e) ? ' chk' : ''}${e.status === 'cancelled' ? ' cancelled' : ''}${S.drawer && S.drawer.id === e.id ? ' sel' : ''}" data-act="event" data-id="${e.id}">
+<span class="tm">${evTime(e, d)}${e.status === 'cancelled' ? ' · 취소됨' : ''}${needsCheck(e) ? ' · 확인 필요' : ''}</span>
+<span class="ti${masked ? ' masked' : ''}">${esc(evLabel(e))}</span>
+${opts.pub && e.visibility !== 'team' ? `<span class="pv">팀원에게: ${esc(pubText(e))}</span>` : ''}
+<span class="mt"><span class="ty">${masked ? (timeOnly(e) ? '시간만 공개' : '유형만 공개') : kindLabel(e)}</span>${String(e.source).startsWith('slack') ? '<span class="src" title="Slack에서 가져온 일정">Slack</span>' : ''}${avs(e.participants)}</span></button>`;
+}
+const dlIssue = i => `<button class="dl i c-${PROJ_C[i.project] || 'slate'}${over(i) ? ' over' : ''}" data-act="issue" data-id="${esc(i.id)}" title="이슈 마감: ${esc(i.title)}">${icon('flag')}${esc(PROJ_S[i.project] || '')} ${esc(i.title)}</button>`;
+const dlMs = m => `<button class="dl m" data-act="milestone" data-id="${esc(m.id)}" title="주요 마감: ${esc(m.title)}">${icon('flag')}${esc(m.title)}</button>`;
+function weekGrid(pass, dls, opts = {}) {
+const w0 = S.week, t = today(); let total = 0, cols = '';
 for (let k = 0; k < 7; k++) {
 const d = addDays(w0, k);
 const evs = evOn(d, { cancelled: true }).filter(pass);
 total += evs.length;
-const dls = !f.deadlines ? [] : [
-...S.milestones.filter(m => m.date === d).map(m => `<button class="dl m" data-act="milestone" data-id="${esc(m.id)}" title="주요 마감: ${esc(m.title)}">${icon('flag')}${esc(m.title)}</button>`),
-...S.issues.filter(i => i.due === d && !closed(i)).map(i => `<button class="dl i c-${PROJ_C[i.project] || 'slate'}${over(i) ? ' over' : ''}" data-act="issue" data-id="${esc(i.id)}" title="이슈 마감: ${esc(i.title)}">${icon('flag')}${esc(PROJ_S[i.project] || '')} ${esc(i.title)}</button>`)];
-const items = evs.map(e => `<button class="ev c-${evColor(e)}${isUnd(e) ? ' und' : ''}${e.status === 'cancelled' ? ' cancelled' : ''}${S.drawer && S.drawer.id === e.id ? ' sel' : ''}" data-act="event" data-id="${e.id}">
-<span class="tm">${evTime(e, d)}${e.status === 'cancelled' ? ' · 취소됨' : ''}</span>
-<span class="ti${e.title == null ? ' masked' : ''}">${esc(evLabel(e))}</span>
-<span class="mt"><span class="ty">${e.title == null ? '상세 비공개' : ECAT[e.category][0]}</span>${String(e.source).startsWith('slack') ? '<span class="src" title="Slack에서 등록된 일정">Slack</span>' : ''}${avs(e.participants)}</span></button>`).join('');
+const dl = dls(d);
+const items = evs.map(e => evBtn(e, d, opts)).join('');
 cols += `<section class="day${d === t ? ' today' : ''}${k >= 5 ? ' weekend' : ''}" aria-label="${full(d)}"><div class="day-h"><b>${+d.slice(8)}</b><span>${DOW[dowOf(d)]}${d === t ? ' · 오늘' : ''}</span></div>
-<div class="day-b">${dls.join('')}${items}${!dls.length && !items ? '<span class="day-empty">일정 없음</span>' : ''}</div></section>`;
+<div class="day-b">${dl.join('')}${items}${!dl.length && !items ? '<span class="day-empty">일정 없음</span>' : ''}</div></section>`;
 }
-const isThis = w0 === weekStart(t);
-return `<div class="head"><div><h1>팀 일정</h1><p>부재·외근·비즈니스 이벤트를 한 주 단위로 확인하세요.</p></div><div class="actions"><button class="btn primary" data-act="add-open" data-id="bulk">${icon('plus')}일정 추가</button></div></div>
-<div class="wk-bar"><div class="wk-nav"><button class="round" data-act="wk-prev" aria-label="이전 주">${icon('left')}</button><h2>${w0.slice(0, 4)}.${w0.slice(5, 7)}.${w0.slice(8)} – ${w1.slice(5, 7)}.${w1.slice(8)}</h2><button class="round" data-act="wk-next" aria-label="다음 주">${icon('right')}</button>
-<button class="btn small" data-act="wk-this" ${isThis ? 'aria-pressed="true"' : ''}>이번 주</button><button class="btn small" data-act="wk-nextweek">다음 주</button></div>
-<span class="sub">월요일 시작 · 한국 시간</span></div>
+return { html: `<div class="week">${cols}</div>`, total };
+}
+function weekNav() {
+const w0 = S.week, w1 = addDays(w0, 6), isThis = w0 === weekStart(today());
+return `<div class="wk-nav"><button class="round" data-act="wk-prev" aria-label="이전 주">${icon('left')}</button><h2>${w0.slice(0, 4)}.${w0.slice(5, 7)}.${w0.slice(8)} – ${w1.slice(5, 7)}.${w1.slice(8)}</h2><button class="round" data-act="wk-next" aria-label="다음 주">${icon('right')}</button>
+<button class="btn small" data-act="wk-this" ${isThis ? 'aria-pressed="true"' : ''}>이번 주</button></div>`;
+}
+const teamDl = d => !S.sf.deadlines ? [] : [...S.milestones.filter(m => m.date === d).map(dlMs), ...S.issues.filter(i => i.due === d && !closed(i)).map(dlIssue)];
+
+// ① Team Calendar: 팀 회의·비즈니스·외근 같은 업무 일정과 마감. 개인 약속·수업은 넣지 않는다. 확인 필요 일정은 따로 보여 준다.
+function teamCalView() {
+const f = S.sf;
+const pass = e => isTeamEv(e) && !needsCheck(e) && (f.cancelled || e.status === 'active') && (!f.types.size || f.types.has(evKind(e))) && (!f.people.size || e.participants.some(p => f.people.has(p)));
+const filtered = f.types.size || f.people.size;
+const typeChip = k => `<button class="fchip c-${ECAT[k][1]}" data-act="sf-type" data-id="${k}" aria-pressed="${f.types.has(k)}">${ECAT[k][0]}</button>`;
+const pChip = m => `<button class="fchip" data-act="sf-person" data-id="${m.id}" aria-pressed="${f.people.has(m.id)}">${avatar(m.id)}${esc(m.name)}</button>`;
+let body, nav;
+if (S.calMode === 'month') {
+const [y, mo] = S.calMonth.split('-').map(Number), first = `${S.calMonth}-01`, start = weekStart(first), t = today();
+const cells = Math.ceil((dayGap(start, first) + new Date(Date.UTC(y, mo, 0)).getUTCDate()) / 7) * 7;
+let html = [1, 2, 3, 4, 5, 6, 0].map(d => `<div class="dow">${DOW[d]}</div>`).join('');
+for (let k = 0; k < cells; k++) {
+const d = addDays(start, k), evs = evOn(d).filter(pass), dl = teamDl(d);
+const chips = [...dl, ...evs.map(e => `<button class="mchip c-${evColor(e)}${isUnd(e) ? ' und' : ''}" data-act="event" data-id="${e.id}"><b>${esc(e.all_day ? '종일' : isUnd(e) ? '미정' : kst(e.start_at).time)}</b>${esc(evLabel(e))}</button>`)];
+html += `<div class="mcell${d.slice(0, 7) !== S.calMonth ? ' out' : ''}${d === t ? ' today' : ''}"><button class="num" data-act="cm-day" data-id="${d}" aria-label="${full(d)} 주간 보기">${+d.slice(8)}</button>${chips.slice(0, 4).join('')}${chips.length > 4 ? `<button class="more" data-act="cm-day" data-id="${d}">+${chips.length - 4}개</button>` : ''}</div>`;
+}
+body = `<div class="mgrid">${html}</div>`;
+nav = `<div class="wk-nav"><button class="round" data-act="cm-prev" aria-label="이전 달">${icon('left')}</button><h2>${y}년 ${mo}월</h2><button class="round" data-act="cm-next" aria-label="다음 달">${icon('right')}</button><button class="btn small" data-act="cm-this">이번 달</button></div>`;
+} else { const g = weekGrid(pass, teamDl); body = g.html; nav = weekNav(); }
+const chk = S.events.filter(e => isTeamEv(e) && needsCheck(e) && e.status === 'active' && evEnd(e) >= (S.calMode === 'month' ? S.calMonth + '-01' : S.week)).sort((a, b) => a.start_at.localeCompare(b.start_at));
+return `<div class="wk-bar">${nav}<div class="tabs" role="tablist" aria-label="보기"><button role="tab" aria-selected="${S.calMode !== 'month'}" data-act="cal-mode" data-id="week">주간</button><button role="tab" aria-selected="${S.calMode === 'month'}" data-act="cal-mode" data-id="month">월간</button></div></div>
 ${slackPanel()}
-<section class="sheet filters" aria-label="필터"><div class="fl"><span>유형</span>${Object.keys(ECAT).map(typeChip).join('')}</div>
-<div class="fl"><span>팀원</span>${team().map(pChip).join('')}</div>
+<section class="sheet filters" aria-label="필터"><div class="fl"><span>유형</span>${TEAM_KINDS.map(typeChip).join('')}</div>
+<div class="fl"><span>참석자</span>${team().map(pChip).join('')}</div>
 <div class="fl"><span>보기</span><button class="fchip" data-act="sf-dl" aria-pressed="${f.deadlines}">마감 함께 보기</button><button class="fchip" data-act="sf-cancel" aria-pressed="${f.cancelled}">취소된 일정 보기</button>${filtered ? '<button class="btn link" data-act="sf-reset">필터 초기화</button>' : ''}</div></section>
-${total === 0 ? `<div class="notice"><p>${filtered ? '선택한 조건의 일정이 없습니다.' : '이 주에 등록된 팀 일정이 없습니다.'}</p><button class="btn small primary" data-act="add-open" data-id="bulk">일정 추가</button></div>` : ''}
-<div class="week">${cols}</div>`;
+${body}
+${chk.length ? `<section class="sheet chk-list" aria-label="확인이 필요한 업무 일정"><div class="sec-title">확인이 필요한 업무 일정<small>확정 전이라 팀 캘린더에는 넣지 않았어요</small></div><div class="stack">${chk.map(e => miniEv(e, true)).join('')}</div></section>` : ''}
+<p class="sub">팀 캘린더에는 팀 회의·비즈니스·외근 일정과 마감만 보여요. 수업·개인 일정은 ‘팀원별 일정’에서 유형과 시간만 볼 수 있어요.</p>`;
+}
+
+// ② Team Availability: 가로 타임라인
+const AV_A = 7 * 60, AV_B = 24 * 60;
+const avPct = x => ((Math.max(AV_A, Math.min(AV_B, x)) - AV_A) / (AV_B - AV_A) * 100).toFixed(2);
+function avPeople() { const all = team(); return S.avPeople && S.avPeople.size ? all.filter(m => S.avPeople.has(m.id)) : all; }
+function avRow(m, day, nowMin) {
+const evs = evOn(day).filter(e => e.participants.includes(m.id));
+const w = dayWork(m.id, day), tags = [], blocks = [];
+for (const e of evs) {
+const sp = evSpan(e, day), lab = evLabel(e);
+if (sp.t === 'all' || sp.t === 'und') { tags.push(`<button class="avtag c-${evColor(e)}${sp.t === 'und' ? ' und' : ''}" data-act="event" data-id="${e.id}">${sp.t === 'all' ? '종일' : '시간 미정'} · ${esc(lab)}</button>`); continue; }
+const a = Math.max(sp.a, AV_A), b = sp.t === 'open' ? Math.min(sp.a + 90, AV_B) : Math.min(sp.b, AV_B);
+if (b <= AV_A || a >= AV_B) continue;
+const tip = `${evTime(e, day)} ${lab}${needsCheck(e) ? ' · 확인 필요' : ''}${sp.t === 'open' ? ' · 종료 시간 미정' : sp.t === 'est' ? ' · 종료는 예상' : sp.t === 'part' ? ' · 세부 시간 미정' : ''}`;
+blocks.push(`<button class="avb c-${evColor(e)} t-${sp.t}${needsCheck(e) ? ' chk' : ''}" style="left:${avPct(a)}%;width:${(avPct(b) - avPct(a)).toFixed(2)}%" data-act="event" data-id="${e.id}" title="${esc(tip)}"><b>${esc(lab)}</b><span>${esc(evTime(e, day))}</span></button>`);
+}
+const band = w.start ? `<i class="av-work" style="left:${avPct(hm(w.start))}%;width:${(avPct(hm(w.end)) - avPct(hm(w.start))).toFixed(2)}%" title="근무 가능 확인: ${w.start}–${w.end}"></i>` : '';
+const note = w.start ? `근무 ${w.start}–${w.end}` : w.off ? w.why : '근무시간 미등록';
+const now = nowMin != null && nowMin >= AV_A && nowMin <= AV_B ? `<i class="av-now" style="left:${avPct(nowMin)}%"></i>` : '';
+return `<div class="av-row"><div class="av-who">${avatar(m.id)}<span><b>${esc(m.name)}</b><small class="${w.start ? '' : 'warn'}">${esc(note)}</small></span></div>
+<div class="av-track${w.start ? ' has-work' : w.off ? ' off' : ' no-work'}">${band}${blocks.join('')}${now}${tags.length ? `<div class="av-tags">${tags.join('')}</div>` : ''}</div></div>`;
+}
+function availView() {
+const day = S.avDay || today(), t = today(), nowMin = day === t ? nowMinKst() : null;
+const hours = []; for (let h = 8; h < 24; h += 2) hours.push(`<span style="left:${avPct(h * 60)}%">${h}</span>`);
+const sel = S.avPeople || new Set();
+return `<div class="wk-bar"><div class="wk-nav"><button class="round" data-act="av-prev" aria-label="이전 날">${icon('left')}</button><h2>${full(day)}</h2><button class="round" data-act="av-next" aria-label="다음 날">${icon('right')}</button><button class="btn small" data-act="av-today" ${day === t ? 'aria-pressed="true"' : ''}>오늘</button></div>
+<label class="sub">날짜 <input type="date" id="av-date" value="${day}"></label></div>
+<section class="sheet filters"><div class="fl"><span>팀원</span>${team().map(m => `<button class="fchip" data-act="av-person" data-id="${m.id}" aria-pressed="${sel.has(m.id)}">${avatar(m.id)}${esc(m.name)}</button>`).join('')}${sel.size ? '<button class="btn link" data-act="av-all">모두 보기</button>' : ''}</div></section>
+<section class="sheet avl2" aria-label="팀원별 일정 타임라인"><div class="av-scroll"><div class="av-grid">
+<div class="av-row av-head"><div class="av-who"></div><div class="av-hours">${hours.join('')}</div></div>
+${avPeople().map(m => avRow(m, day, nowMin)).join('')}</div></div>
+<div class="legend av-legend">${KINDS6.map(k => `<span class="c-${ECAT[k][1]}"><i></i>${ECAT[k][0]}</span>`).join('')}<span><i class="lg-work"></i>근무 가능 확인</span><span><i class="lg-est"></i>예상·종료 미정</span><span><i class="lg-part"></i>시간대만 확인</span><span><i class="lg-chk"></i>확인 필요</span></div>
+<p class="sub">빈 칸은 ‘일정이 등록되지 않은 시간’이에요. 근무 가능 시간이 등록된 팀원만 초록 띠로 ‘근무 가능 확인’이 표시돼요. 개인 일정은 공개 범위에 따라 ‘수업’, ‘개인 일정’, ‘부재’로만 보여요.</p></section>
+${findTimeHTML()}`;
+}
+
+// Find a Time: AI 없이 시간 구간 비교. 근무 정보가 없는 팀원이 있으면 확정 추천하지 않는다.
+const FT_A = 8 * 60, FT_B = 22 * 60, FT_STEP = 30, FT_OPEN = 180; // 종료 미정 일정은 시작 후 3시간까지 '판단 불가'로 본다
+const FT_ST = { ok: ['근무 가능 확인된 공통 시간', 'green'], free: ['일정 충돌 없음 · 근무 여부 미확인', 'blue'], unknown: ['정보 부족 · 판단 불가', 'amber'], conflict: ['일정과 충돌', 'red'] };
+function personSlot(id, day, a, b) {
+const w = dayWork(id, day);
+if (w.off) return ['conflict', w.why];
+let unknown = null;
+for (const e of evOn(day).filter(x => x.participants.includes(id))) {
+const sp = evSpan(e, day), lab = evLabel(e);
+if (sp.t === 'und') { unknown = unknown || `${lab} 시간 미정`; continue; }
+const end = sp.t === 'open' ? Math.min(1440, sp.a + FT_OPEN) : sp.b;
+if (!(sp.a < b && a < end)) continue;
+if (needsCheck(e) || sp.t === 'part' || sp.t === 'open') { unknown = unknown || `${evTime(e, day)} ${lab}${needsCheck(e) ? ' (확인 필요)' : ''}`; continue; }
+return ['conflict', `${evTime(e, day)} ${lab}`];
+}
+if (unknown) return ['unknown', unknown];
+if (w.start) return a >= hm(w.start) && b <= hm(w.end) ? ['ok', ''] : ['conflict', `근무시간 ${w.start}–${w.end} 밖`];
+return ['free', '근무시간 미등록'];
+}
+function findSlots(people, from, to, dur) {
+const days = [], nowMs = Date.now();
+for (let d = from; d <= to && days.length < 14; d = addDays(d, 1)) {
+const cells = [];
+for (let a = FT_A; a + dur <= FT_B; a += FT_STEP) {
+const startMs = new Date(toIso(d, `${pad(Math.floor(a / 60))}:${pad(a % 60)}`)).getTime();
+if (startMs < nowMs) { cells.push({ a, st: 'past' }); continue; }
+const per = people.map(id => [id, ...personSlot(id, d, a, a + dur)]);
+const st = per.some(x => x[1] === 'conflict') ? 'conflict' : per.some(x => x[1] === 'unknown') ? 'unknown' : per.every(x => x[1] === 'ok') ? 'ok' : 'free';
+cells.push({ a, st, why: per.filter(x => x[2]).map(x => `${nameOf(x[0])}: ${x[2]}`).join(' · ') });
+}
+days.push({ d, cells });
+}
+return days;
+}
+const hhmm = m => `${pad(Math.floor(m / 60) % 24)}:${pad(m % 60)}`;
+function findTimeHTML() {
+const ft = S.ft, people = [...ft.people].filter(id => team().some(m => m.id === id));
+const from = ft.from || S.avDay || today(), to = ft.to && ft.to >= from ? ft.to : addDays(from, 4);
+const noWork = people.filter(id => !S.patterns.some(x => x.member === id) && !S.plans.some(p => p.member === id && p.work_start));
+let out = '';
+if (people.length) {
+const days = findSlots(people, from, to, ft.dur);
+const groups = { ok: [], free: [] };
+for (const { d, cells } of days) {
+let run = null;
+const flush = () => { if (run) groups[run.st].push(run); run = null; };
+for (const c of cells) {
+if (c.st === 'ok' || c.st === 'free') { if (run && run.st === c.st && c.a === run.last + FT_STEP) run.last = c.a; else { flush(); run = { d, st: c.st, first: c.a, last: c.a }; } }
+else flush();
+}
+flush();
+}
+const cand = (r, k) => `<li><span><b>${md(r.d)} (${DOW[dowOf(r.d)]})</b> ${hhmm(r.first)}${r.last > r.first ? `~${hhmm(r.last)} 사이 시작` : ' 시작'} · ${fmtMin(ft.dur)}</span><button class="btn small" data-act="ft-make" data-id="${r.d}|${r.first}">일정 만들기</button></li>`;
+const strip = days.map(({ d, cells }) => `<div class="ft-day"><span class="ft-d">${md(d)} ${DOW[dowOf(d)]}</span><div class="ft-cells">${cells.map(c => `<i class="ft-${c.st}" title="${hhmm(c.a)} 시작 · ${c.st === 'past' ? '지난 시간' : FT_ST[c.st][0]}${c.why ? ' — ' + esc(c.why) : ''}"></i>`).join('')}</div></div>`).join('');
+out = `${noWork.length ? `<div class="notice"><p><b>${esc(noWork.map(nameOf).join(', '))}</b>님은 근무 가능 시간이 등록되지 않았어요. 그래서 ‘근무 가능 확인된 공통 시간’으로 확정 추천하지 않고, ‘일정 충돌 없음 · 근무 여부 미확인’으로만 보여 드려요.</p></div>` : ''}
+<div class="ft-res"><div><div class="sec">${FT_ST.ok[0]} ${groups.ok.length}</div><ul class="ft-list">${groups.ok.slice(0, 8).map(r => cand(r)).join('') || '<li class="sub">없어요</li>'}</ul></div>
+<div><div class="sec">${FT_ST.free[0]} ${groups.free.length}</div><ul class="ft-list">${groups.free.slice(0, 8).map(r => cand(r)).join('') || '<li class="sub">없어요</li>'}</ul></div></div>
+<div class="ft-strip"><div class="ft-day ft-axis"><span class="ft-d"></span><div class="ft-cells">${Array.from({ length: (FT_B - FT_A) / 60 }, (_, k) => `<span style="left:${(k * 60 / (FT_B - FT_A) * 100).toFixed(2)}%">${FT_A / 60 + k}</span>`).join('')}</div></div>${strip}</div>
+<div class="legend">${Object.entries(FT_ST).map(([k, v]) => `<span><i class="ft-${k}"></i>${v[0]}</span>`).join('')}</div>
+<p class="sub">시간대만 확인된 일정(오전·오후 수업 등), 확인 필요 일정, 시간 미정 일정이 있는 날은 ‘판단 불가’예요. 종료 시간이 없는 일정은 시작 후 3시간까지 판단 불가로 봐요.</p>`;
+} else out = '<p class="sub">참석자를 고르면 공통으로 비는 시간을 찾아 드려요.</p>';
+return `<section class="sheet ft" aria-label="회의 시간 찾기"><div class="sec-title">Find a Time · 회의 시간 찾기<small>등록된 일정과 근무 시간만 비교해요</small></div>
+<div class="ft-ctl"><div class="fl"><span>참석자</span>${team().map(m => `<button class="fchip" data-act="ft-person" data-id="${m.id}" aria-pressed="${ft.people.has(m.id)}">${avatar(m.id)}${esc(m.name)}</button>`).join('')}</div>
+<div class="ft-row"><label class="f">시작 날짜<input type="date" id="ft-from" value="${from}"></label><label class="f">끝 날짜<input type="date" id="ft-to" value="${to}"></label>
+<label class="f">회의 길이<select id="ft-dur">${[30, 60, 90, 120].map(n => `<option value="${n}" ${ft.dur === n ? 'selected' : ''}>${fmtMin(n)}</option>`).join('')}</select></label></div></div>
+${out}</section>`;
+}
+
+// ③ My Calendar: 내가 만들었거나 참석하는 모든 일정 + 내 담당 이슈 마감
+function myCalView() {
+const pass = e => evMine(e) && (S.sf.cancelled || e.status === 'active');
+const myDl = d => S.issues.filter(i => i.due === d && !closed(i) && (i.takers || []).includes(S.me.id)).map(dlIssue);
+const g = weekGrid(pass, myDl, { pub: true });
+return `<div class="wk-bar">${weekNav()}<span class="sub">내 일정은 상세까지 보이고, 팀원에게는 ‘팀원에게:’로 표시된 만큼만 보여요.</span></div>
+${g.html}
+${g.total === 0 ? '<div class="notice"><p>이 주에 내 일정이 없어요.</p><button class="btn small primary" data-act="add-open" data-id="single">일정 추가</button></div>' : ''}`;
+}
+
+function scheduleView() {
+const tab = S.sv || 'team';
+const T = [['team', 'Team Calendar', '공동 업무 일정'], ['avail', 'Team Availability', '팀원별 일정·가용 시간'], ['mine', 'My Calendar', '내 일정']];
+const desc = { team: '팀 회의·비즈니스 미팅·외근과 마감을 함께 봐요.', avail: '팀원들의 일정을 한 줄씩 비교하고 회의 시간을 찾아요.', mine: '내 수업·개인 일정·회의·담당 이슈 마감을 관리해요.' }[tab];
+return `<div class="head"><div><h1>팀 일정</h1><p>${desc}</p></div><div class="actions"><button class="btn primary" data-act="add-open" data-id="${tab === 'team' ? 'bulk' : 'single'}">${icon('plus')}일정 추가</button></div></div>
+<div class="sv-tabs" role="tablist" aria-label="일정 보기">${T.map(([k, l, s]) => `<button role="tab" aria-selected="${tab === k}" data-act="sv-tab" data-id="${k}"><b>${l}</b><span>${s}</span></button>`).join('')}</div>
+${tab === 'avail' ? availView() : tab === 'mine' ? myCalView() : teamCalView()}`;
 }
 
 /* ---------- Slack 수집 ---------- */
@@ -1396,15 +1679,21 @@ const ctrl = !can ? `<p class="sub">${e.created_by === S.me.id ? '' : '작성자
 : d.confirm && e.virtual ? `<div class="notice alert"><p>어떤 일정을 삭제할까요? 지운 날은 다시 생기지 않아요.</p><button class="btn small danger" data-act="sr-del" data-id="one">${md(e.series_date)} 하루만</button><button class="btn small danger" data-act="sr-del" data-id="following">${md(e.series_date)}부터 앞으로 모두</button><button class="btn small danger" data-act="sr-del" data-id="all">반복 전체</button><button class="btn small" data-act="ev-status-no">아니요</button></div>`
 : d.confirm ? `<div class="notice alert"><p>${e.status === 'active' ? '이 일정을 취소할까요? 기록은 남고, 관련 인물에게 알림이 가요.' : '취소한 일정을 다시 잡을까요?'}</p><button class="btn small danger" data-act="ev-status-yes">${e.status === 'active' ? '일정 취소' : '다시 잡기'}</button><button class="btn small" data-act="ev-status-no">아니요</button></div>`
 : `<div class="actions"><button class="btn small" data-act="ev-edit">수정</button><button class="btn small" data-act="ev-status">${e.virtual ? '삭제' : e.status === 'active' ? '일정 취소' : '취소 되돌리기'}</button></div>`;
-body = `<div class="actions">${evTag(e)}<span class="tag line">${VIS[e.visibility][0]}</span><span class="tag c-${st[1]}">${st[0]}</span></div>
+const att = e.attendance || {}, who = [...new Set([...e.participants, ...Object.keys(att)])];
+const pList = who.map(p => { const a = att[p] || {}, s0 = a.s || (e.participants.includes(p) ? '' : 'declined'); return `<span>${avatar(p)}${esc(nameOf(p))}${s0 ? ` <span class="tag ${s0 === 'maybe' ? 'line' : 'c-' + ATT[s0][1]}">${ATT[s0][0]}</span>` : ''}${a.note ? ` <span class="sub">${esc(a.note)}</span>` : ''}</span>`; }).join('');
+const tm = e.time_mode || (e.all_day ? 'all_day' : 'timed'), sc = scopeOf(e), seeAll = e.title != null;
+body = `<div class="actions">${evTag(e)}<span class="tag line">${SCOPE[sc][0]}</span>${needsCheck(e) ? '<span class="tag c-orange">확인 필요</span>' : ''}<span class="tag c-${st[1]}">${st[0]}</span></div>
 <h2 style="font-size:20px;font-weight:640;line-height:1.35${e.status === 'cancelled' ? ';text-decoration:line-through' : ''}">${esc(evLabel(e))}</h2>
-${e.title == null ? `<p class="sub">공개 범위에 따라 제목과 메모는 작성자${e.visibility === 'limited' ? '와 관련 인물' : ''}에게만 보여요.</p>` : ''}
+${e.title == null ? `<p class="sub">${timeOnly(e) ? '작성자가 ‘시간만 공개’로 정한 일정이에요. 유형과 제목은 보이지 않아요.' : `공개 범위에 따라 제목과 메모는 작성자${e.visibility === 'limited' ? '와 참석자' : ''}에게만 보여요.`}</p>` : ''}
 <dl class="kv"><dt>일시</dt><dd>${esc(evRange(e))}</dd>
+<dt>시간 상태</dt><dd>${TMODE[tm]}${isOpenEnd(e) && e.est_end_at ? ` · <span class="sub">예상 종료 ${kst(e.est_end_at).time} (확정 아님)</span>` : ''}</dd>
+<dt>유형</dt><dd>${seeAll || !timeOnly(e) ? kindLabel(e) : '비공개'}</dd>
 ${srs ? `<dt>반복</dt><dd>${esc(ruleText(srs))}${e.virtual ? '' : '<br><span class="sub">반복 일정 중 이 날만 바꾼 일정이에요.</span>'}</dd>` : ''}
-<dt>관련 인물</dt><dd><div class="plist">${e.participants.map(p => `<span>${avatar(p)}${esc(nameOf(p))}</span>`).join('')}</div></dd>
-<dt>공개 범위</dt><dd>${VIS[e.visibility][0]} · <span class="sub">${VIS[e.visibility][1]}</span></dd>
+<dt>참석자</dt><dd><div class="plist">${pList}</div></dd>
+<dt>공개 범위</dt><dd>${SCOPE[sc][0]} · <span class="sub">${SCOPE[sc][1]}</span>${seeAll && e.visibility !== 'team' ? `<br><span class="sub">다른 팀원에게는 ‘${esc(pubText(e))}’로 보여요.</span>` : ''}</dd>
+<dt>조율</dt><dd>${FLEX[e.flex || 'unknown']}</dd>
 <dt>작성자</dt><dd>${esc(nameOf(e.created_by))} · ${esc(stamp(e.created_at))}</dd>
-${String(e.source).startsWith('slack') ? `<dt>출처</dt><dd>${e.source === 'slack_auto' ? 'Slack에서 자동 등록' : 'Slack에서 확인 후 등록'}${e.source_link ? ` · <a class="btn link" href="${esc(e.source_link)}" target="_blank" rel="noopener">원본 메시지 보기</a>` : ''}</dd>` : ''}
+${String(e.source).startsWith('slack') ? `<dt>출처</dt><dd>${e.source === 'slack_auto' ? 'Slack에서 자동 등록' : e.source === 'slack_import' ? 'Slack 주간 일정 공유에서 가져옴' : 'Slack에서 확인 후 등록'}${e.source_link ? ` · <a class="btn link" href="${esc(e.source_link)}" target="_blank" rel="noopener">원본 메시지 보기</a>` : ''}</dd>` : ''}
 ${e.version > 1 ? `<dt>마지막 수정</dt><dd>${esc(nameOf(e.updated_by))} · ${esc(stamp(e.updated_at))}</dd>` : ''}
 ${e.note ? `<dt>메모</dt><dd style="white-space:pre-wrap">${esc(e.note)}</dd>` : ''}
 ${links.length ? `<dt>연결</dt><dd>${links.map(x => x.code ? `<button class="btn link" data-act="issue" data-id="${esc(x.id)}">${esc(x.code)} ${esc(x.title)}</button>` : `<button class="btn link" data-act="milestone" data-id="${esc(x.id)}">${esc(x.title)}</button>`).join('<br>')}</dd>` : ''}</dl>
@@ -1479,14 +1768,15 @@ ${Object.entries(VIS).map(([k, v]) => `<tr><td><span class="tag line">${v[0]}</s
 
 /* ---------- 일정 입력 파서 ---------- */
 const KW = [
-['vacation', /휴가|연차|반차|월차|휴무|병가|리프레시/],
-['absence', /부재|병원|자리\s*비움|조퇴|외출|예비군|민방위|진료/],
-['business', /행사|데모\s*데이|\bIR\b|투자|경진대회|오디션|audition|컨퍼런스|conference|포럼|박람회|전시회|런칭|피칭|gathering|네트워킹|파트너스|심사|시상/i],
-['external_meeting', /외근|출장|미팅|meeting|면담|회의|상담|특강|강의|세미나|인터뷰|방문|워크숍|교육/i],
-['personal', /점심|저녁|약속|개인|생일|운동|가족|식사/],
+['vacation', /휴가|연차|반차|월차|휴무|병가|리프레시|부재|자리\s*비움|조퇴|예비군|민방위/],
+['class', /수업|강의(?!실)|lecture|\bclass\b|시험/i],
+['team_meeting', /팀\s*회의|전체\s*회의|주간\s*회의|gathering|게더링|스크럼|스탠드업|싱크|align|회고|킥오프/i],
+['external_meeting', /외근|출장|현장|방문/],
+['business', /미팅|meeting|\bIR\b|투자|멘토링|특강|행사|데모\s*데이|경진대회|컨퍼런스|conference|포럼|박람회|세미나|피칭|네트워킹|심사|인터뷰|면담|회의/i],
+['personal', /점심|저녁|약속|개인|생일|운동|가족|식사|병원|진료|소모임|친구/],
 ];
 function guessType(t) { for (const [k, re] of KW) if (re.test(t)) return k; return ''; }
-function defaultVis(cat) { return cat === 'personal' ? (member(S.me.id)?.private_default || 'private') : cat === 'absence' || cat === 'vacation' ? 'limited' : 'team'; }
+function defaultVis(cat) { return scopeVis(defaultScope(cat)).visibility; }
 function pickYear(m, d, ref) {
 const ry = +ref.slice(0, 4); let best = null;
 for (const y of [ry - 1, ry, ry + 1]) {
@@ -1525,7 +1815,7 @@ matches.forEach((mm, k) => {
 let title = tidy(line.slice(mm.index + mm[0].length, k + 1 < matches.length ? matches[k + 1].index : line.length));
 if (k === 0 && prefix) title = title ? `${prefix} ${title}` : prefix;
 const bad = +mm[1] > 23 || +mm[2] > 59 || +mm[3] > 24 || +mm[4] > 59 || (+mm[3] === 24 && +mm[4] > 0);
-out.push({ ...base, title, start: `${pad(mm[1])}:${mm[2]}`, end: +mm[3] === 24 ? '23:59' : `${pad(mm[3])}:${mm[4]}`, badTime: bad });
+out.push({ ...base, title, tmode: 'timed', start: `${pad(mm[1])}:${mm[2]}`, end: +mm[3] === 24 ? '23:59' : `${pad(mm[3])}:${mm[4]}`, badTime: bad });
 });
 } else {
 const allDay = /종일|하루\s*종일|all\s*day/i.test(line);
@@ -1534,12 +1824,14 @@ const undecided = !allDay && !one && /시간\s*(은|이)?\s*(미정|추후|tbd)/
 let title = tidy(line.replace(/종일|하루\s*종일|all\s*day/ig, '').replace(/[(\[]?\s*시간\s*(은|이)?\s*(미정|추후|tbd)\s*[)\]]?/ig, ''));
 let start = '', end = '';
 if (one && !allDay) { start = `${pad(one[1])}:${one[2]}`; title = tidy(line.replace(one[0], '')); }
-out.push({ ...base, title, allDay, undecided, start, end, badTime: one ? (+one[1] > 23 || +one[2] > 59) : false, noTime: !allDay && !one && !undecided });
+const part = !allDay && !one && !undecided ? (/오전/.test(line) ? 'am' : /오후/.test(line) ? 'pm' : '') : '';
+out.push({ ...base, title, allDay, undecided, start, end, dayPart: part || 'am', tmode: allDay ? 'all_day' : undecided ? 'undecided' : part ? 'part_of_day' : one ? 'start_only' : 'timed',
+badTime: one ? (+one[1] > 23 || +one[2] > 59) : false, noTime: !allDay && !one && !undecided && !part });
 }
 });
 return out.map((c, i) => {
 const cat = guessType(c.title);
-return { ...c, idx: i, category: cat, typeGuess: cat, typeOk: !!cat && cat !== 'personal', visibility: cat ? defaultVis(cat) : 'team', visTouched: false,
+return { ...c, idx: i, category: cat, typeGuess: cat, typeOk: !!cat && cat !== 'personal', visibility: cat ? defaultVis(cat) : 'team', visTouched: false, scope: defaultScope(cat), scopeTouched: false, flex: 'unknown', needsCheck: false, est: '',
 participants: [S.me.id], excluded: false, dupOk: false, dateOk: !c.inherited, overnightOk: false, saved: false };
 });
 }
@@ -1548,12 +1840,18 @@ const iss = [];
 if (!c.title.trim()) iss.push(['제목을 입력해 주세요.']);
 if (!c.date) iss.push([c.dateNote === 'bad' ? '날짜를 읽을 수 없어요. 날짜를 골라 주세요.' : '날짜가 없어요. 날짜를 골라 주세요.']);
 else if (!c.dateOk) iss.push(['앞 줄의 날짜를 이어받았어요. 맞는지 확인해 주세요.', 'date-ok', '날짜 맞아요']);
-if (c.undecided) { /* 시간 미정: 날짜만 있으면 된다 */ }
+if (c.undecided || c.tmode === 'undecided') { /* 시간 미정: 날짜만 있으면 된다 */ }
+else if (c.tmode === 'part_of_day') { if (!c.dayPart) iss.push(['오전·오후를 골라 주세요.']); }
+else if (c.tmode === 'start_only') {
+if (c.badTime) iss.push(['시각을 읽을 수 없어요. 시작 시각을 다시 골라 주세요.']);
+else if (!c.start) iss.push(['시작 시각을 정해 주세요.']);
+else if (c.est && c.est <= c.start) iss.push(['예상 종료가 시작보다 빠르거나 같아요.']);
+}
 else if (!c.allDay) {
 if (c.badTime) iss.push(['시각을 읽을 수 없어요. 시작·종료 시각을 다시 골라 주세요.']);
 else if (!c.start && !c.end) iss.push(['시간이 없어요. 시각을 정하거나 종일·시간 미정으로 바꿔 주세요.', 'allday', '종일 일정으로', 'undecided', '시간 미정으로']);
 else if (!c.start) iss.push(['시작 시각을 정해 주세요.']);
-else if (!c.end) iss.push(['종료 시각이 없어요. 종료 시각을 정해 주세요.']);
+else if (!c.end) iss.push(['종료 시각이 없어요. 종료 시각을 정하거나 ‘시작 시간만 확정’으로 바꿔 주세요.', 'startonly', '종료 미정으로']);
 else if (c.end <= c.start && !c.nextDay) iss.push(['종료가 시작보다 빠르거나 같아요. 다음 날까지 이어지나요?', 'nextday', '다음 날까지예요']);
 } else if (c.endDate && c.date && c.endDate < c.date) iss.push(['종료 날짜가 시작 날짜보다 빨라요.']);
 if (!c.category) iss.push(['유형을 골라 주세요.']);
@@ -1562,6 +1860,8 @@ if (mode !== 'edit' && !c.dupOk && isDup(c)) iss.push(['같은 날짜·시간·�
 return iss;
 }
 function cardTimes(c) {
+if (c.tmode === 'part_of_day' && !c.allDay && !c.undecided) { const am = c.dayPart !== 'pm'; return { start_at: toIso(c.date, am ? '09:00' : '13:00'), end_at: toIso(c.date, am ? '12:00' : '18:00'), all_day: false, time_mode: 'part_of_day', day_part: am ? 'am' : 'pm' }; }
+if (c.tmode === 'start_only' && !c.allDay && !c.undecided) { const st = toIso(c.date, c.start); return { start_at: st, end_at: st, all_day: false, time_mode: 'start_only', est_end_at: c.est && c.est > c.start ? toIso(c.date, c.est) : null }; }
 if (c.undecided) return { start_at: toIso(c.date, '00:00'), end_at: toIso(addDays(c.date, 1), '00:00'), all_day: false, time_mode: 'undecided' };
 if (c.allDay) return { start_at: toIso(c.date, '00:00'), end_at: toIso(addDays(c.endDate && c.endDate > c.date ? c.endDate : c.date, 1), '00:00'), all_day: true, time_mode: 'all_day' };
 return { start_at: toIso(c.date, c.start), end_at: toIso(c.nextDay || c.end <= c.start ? addDays(c.date, 1) : c.date, c.end), all_day: false, time_mode: 'timed' };
@@ -1577,44 +1877,51 @@ return a.cards.some(o => o !== c && o.idx < c.idx && !o.excluded && o.title.trim
 }
 const cardState = (c, mode) => c.saved ? 'saved' : c.excluded ? 'excluded' : cardIssues(c, mode).length ? 'needs' : 'ok';
 function cardEditor(c, mode) {
-const st = cardState(c, mode), id = mode === 'edit' ? 'e' : c.idx;
+const st = cardState(c, mode), id = mode === 'edit' ? 'e' : c.idx, dis = c.saved ? 'disabled' : '';
 const opt = (o, v, label) => `<option value="${o}" ${o === v ? 'selected' : ''}>${label}</option>`;
+const tm = c.tmode || (c.allDay ? 'all_day' : c.undecided ? 'undecided' : 'timed'), sc = c.scope || 'detail';
+const tf = tm === 'undecided' ? `<span class="sub tf-note">날짜만 정해졌어요. 시간이 정해지면 바꿔 주세요.</span>`
+: tm === 'all_day' ? `<label class="f">종료 날짜<input type="date" data-f="endDate" value="${esc(c.endDate || c.date)}" ${dis}></label>`
+: tm === 'part_of_day' ? `<label class="f">시간대<select data-f="dayPart" ${dis}>${opt('am', c.dayPart, '오전')}${opt('pm', c.dayPart, '오후')}</select></label>`
+: tm === 'start_only' ? `<label class="f">시작<input type="time" data-f="start" value="${esc(c.start)}" ${dis}></label><label class="f">예상 종료 (선택)<input type="time" data-f="est" value="${esc(c.est || '')}" ${dis}></label>`
+: `<label class="f">시작<input type="time" data-f="start" value="${esc(c.start)}" ${dis}></label><label class="f">종료<input type="time" data-f="end" value="${esc(c.end)}" ${dis}></label>`;
 return `<div class="rcard ${st}" data-card="${id}">
 <div class="rc-head" data-part="head">${cardHead(c, mode)}</div>
 <div class="rc-grid">
-<label class="f wide">일정명<input type="text" data-f="title" value="${esc(c.title)}" maxlength="200" ${c.saved ? 'disabled' : ''}></label>
-<label class="f">날짜<input type="date" data-f="date" value="${esc(c.date)}" ${c.saved ? 'disabled' : ''}></label>
-${c.undecided ? `<span class="sub" style="align-self:end;padding-bottom:8px">시간 미정 · 시간이 정해지면 체크를 풀고 입력하세요</span><span></span>`
-: c.allDay ? `<label class="f">종료 날짜<input type="date" data-f="endDate" value="${esc(c.endDate || c.date)}" ${c.saved ? 'disabled' : ''}></label><span></span>`
-: `<label class="f">시작<input type="time" data-f="start" value="${esc(c.start)}" ${c.saved ? 'disabled' : ''}></label><label class="f">종료<input type="time" data-f="end" value="${esc(c.end)}" ${c.saved ? 'disabled' : ''}></label>`}
+<label class="f wide">일정명<input type="text" data-f="title" value="${esc(c.title)}" maxlength="200" ${dis}></label>
+<label class="f">날짜<input type="date" data-f="date" value="${esc(c.date)}" ${dis}></label>
+<label class="f">시간<select data-f="tmode" ${dis}>${Object.keys(TMODE).map(k => opt(k, tm, TMODE[k])).join('')}</select></label>
+${tf}
 </div>
 <div class="rc-grid2">
-<label class="f">유형<select data-f="category" ${c.saved ? 'disabled' : ''}>${c.category ? '' : '<option value="" selected>유형 선택</option>'}${Object.keys(ECAT).map(k => opt(k, c.category, ECAT[k][0])).join('')}</select></label>
-<label class="f">공개 범위<select data-f="visibility" ${c.saved ? 'disabled' : ''}>${Object.keys(VIS).map(k => opt(k, c.visibility, VIS[k][0])).join('')}</select></label>
-<label class="chk"><input type="checkbox" data-f="allDay" ${c.allDay ? 'checked' : ''} ${c.saved ? 'disabled' : ''}>종일</label>
-<label class="chk" title="날짜는 정해졌지만 시간은 아직 안 정해진 일정"><input type="checkbox" data-f="undecided" ${c.undecided ? 'checked' : ''} ${c.saved ? 'disabled' : ''}>시간 미정</label>
+<label class="f">유형<select data-f="category" ${dis}>${c.category ? '' : '<option value="" selected>유형 선택</option>'}${KINDS6.concat(KINDS6.includes(c.category) || !c.category ? [] : [c.category]).map(k => opt(k, c.category, ECAT[k][0])).join('')}</select></label>
+<label class="f">공개 범위<select data-f="scope" ${dis}>${Object.keys(SCOPE).map(k => opt(k, sc, SCOPE[k][0])).join('')}</select></label>
+<label class="f">조율<select data-f="flex" ${dis}>${Object.keys(FLEX).map(k => opt(k, c.flex || 'unknown', FLEX[k])).join('')}</select></label>
+<label class="chk" title="날짜·시간·참석 여부 등 확인이 더 필요한 일정"><input type="checkbox" data-f="needsCheck" ${c.needsCheck ? 'checked' : ''} ${dis}>확인 필요</label>
 </div>
-<div class="pp"><span>관련 인물</span>${team().map(m => `<button type="button" class="fchip" data-f="person" data-id="${m.id}" aria-pressed="${c.participants.includes(m.id)}" ${c.saved ? 'disabled' : ''}>${avatar(m.id)}${esc(m.name)}</button>`).join('')}</div>
+<p class="sub scope-hint">${esc(SCOPE[sc][1])}${sc === 'type' ? '' : ''}</p>
+${sc === 'type' ? `<label class="f pubt">팀원에게 보일 이름 (선택)<input type="text" data-f="pubTitle" maxlength="40" placeholder="${esc(ECAT[c.category]?.[0] || '개인 일정')}" value="${esc(c.pubTitle || '')}" ${dis}></label>` : ''}
+<div class="pp"><span>참석자</span>${team().map(m => `<button type="button" class="fchip" data-f="person" data-id="${m.id}" aria-pressed="${c.participants.includes(m.id)}" ${dis}>${avatar(m.id)}${esc(m.name)}</button>`).join('')}</div>
 <ul class="rc-issues" data-part="issues">${cardIssueList(c, mode)}</ul>
-${mode === 'edit' ? `<label class="f" style="display:grid;gap:3px;font-size:11.5px;color:var(--muted)">메모<textarea data-f="note" maxlength="2000" style="min-height:56px">${esc(c.note || '')}</textarea></label>` : ''}
+${mode === 'edit' ? `<label class="f" style="display:grid;gap:3px;font-size:11.5px;color:var(--muted)">메모 (상세를 볼 수 있는 사람에게만 보여요)<textarea data-f="note" maxlength="2000" style="min-height:56px">${esc(c.note || '')}</textarea></label>` : ''}
 ${c.raw ? `<details class="rc-raw"><summary>원문 보기 (${c.line}번째 줄)</summary><p>${esc(c.raw)}</p></details>` : ''}
 </div>`;
 }
 function cardHead(c, mode) {
 const st = cardState(c, mode);
 const badge = { ok: ['정상', 'green'], needs: ['확인 필요', 'red'], excluded: ['제외', 'slate'], saved: ['등록됨', 'green'] }[st];
-const when = c.date ? `${md(c.date)} (${DOW[dowOf(c.date)]}) ${c.undecided ? '시간 미정' : c.allDay ? '종일' : (c.start || '--:--') + '–' + (c.end || '--:--')}` : '날짜 미확인';
+const when = c.date ? `${md(c.date)} (${DOW[dowOf(c.date)]}) ${c.undecided ? '시간 미정' : c.allDay ? '종일' : c.tmode === 'part_of_day' ? (c.dayPart === 'pm' ? '오후' : '오전') + ' · 세부 시간 미정' : c.tmode === 'start_only' ? (c.start || '--:--') + '~ ' + (c.est ? '예상 ' + c.est : '종료 미정') : (c.start || '--:--') + '–' + (c.end || '--:--')}` : '날짜 미확인';
 return `<span class="actions"><span class="tag c-${badge[1]}">${badge[0]}</span><b style="font-weight:560">${esc(when)}</b>${c.typeGuess && c.category === c.typeGuess && mode !== 'edit' ? `<span class="sub">유형은 내용으로 추천했어요</span>` : ''}</span>
 ${mode === 'edit' || c.saved ? '' : `<button type="button" class="btn small" data-act="card-ex">${c.excluded ? '다시 포함' : '등록에서 제외'}</button>`}`;
 }
 function cardIssueList(c, mode) {
 if (c.saved || c.excluded) return '';
 return cardIssues(c, mode).map(([t, a, b, a2, b2]) => `<li>${esc(t)}${a ? `<button type="button" class="btn small" data-act="card-fix" data-id="${a}">${esc(b)}</button>` : ''}${a2 ? `<button type="button" class="btn small" data-act="card-fix" data-id="${a2}">${esc(b2)}</button>` : ''}</li>`).join('')
-+ (c.visibility === 'private' && c.category !== 'personal' ? '<li class="info">비공개로 등록하면 팀원에게는 ‘개인 일정’과 시간만 보여요.</li>' : '');
++ (c.scope === 'self' ? '<li class="info">본인만 공개하면 팀 가용 시간에도 보이지 않아요. 회의 시간 조율이 필요하면 ‘시간만 공개’를 권해요.</li>' : '');
 }
 
 /* ---------- 일정 추가 대화상자 ---------- */
-function blankCard() { const d = S.week && S.week <= today() && today() <= addDays(S.week, 6) ? today() : (S.week || today()); return { idx: 0, raw: '', line: 0, title: '', date: d, dateOk: true, start: '10:00', end: '11:00', allDay: false, endDate: '', nextDay: false, category: '', typeGuess: '', typeOk: true, visibility: 'team', visTouched: false, participants: [S.me.id], excluded: false, dupOk: false, saved: false, note: '' }; }
+function blankCard() { const d = S.week && S.week <= today() && today() <= addDays(S.week, 6) ? today() : (S.week || today()); return { idx: 0, raw: '', line: 0, title: '', date: d, dateOk: true, tmode: 'timed', start: '10:00', end: '11:00', est: '', dayPart: 'am', allDay: false, undecided: false, endDate: '', nextDay: false, category: '', typeGuess: '', typeOk: true, visibility: 'team', visTouched: false, scope: 'detail', scopeTouched: false, flex: 'unknown', needsCheck: false, pubTitle: '', participants: [S.me.id], excluded: false, dupOk: false, saved: false, note: '' }; }
 function openAdd(tab) {
 if (!S.add) S.add = { tab: tab || 'bulk', text: '', cards: [], batch: null, result: null, saving: false };
 if (tab) S.add.tab = tab;
@@ -1643,7 +1950,7 @@ ${a.cards.length ? `<div class="sec"><span>${n.total}개 인식 · 정상 ${n.ok
 : `<div class="empty"><strong>아직 확인할 일정이 없어요</strong><span>왼쪽에 일정을 적고 일정 확인을 누르면, 한 건씩 카드로 나눠 보여 드려요.</span></div>`}</div></div>`;
 } else {
 body = `<div class="add-body single"><div class="add-out">${resultBox}
-<div class="chips"><span class="sub">빠른 선택</span>${[['외근', 'external_meeting', false], ['미팅', 'external_meeting', false], ['휴가', 'vacation', true], ['부재', 'absence', false], ['비즈니스 이벤트', 'business', false]].map(([l, k, ad]) => `<button type="button" class="fchip c-${ECAT[k][1]}" data-act="preset" data-id="${k}|${ad ? 1 : 0}|${l}">${l}</button>`).join('')}</div>
+<div class="chips"><span class="sub">빠른 선택</span>${[['팀 회의', 'team_meeting', false], ['미팅', 'business', false], ['외근', 'external_meeting', false], ['수업', 'class', false], ['개인 일정', 'personal', false], ['휴가', 'vacation', true]].map(([l, k, ad]) => `<button type="button" class="fchip c-${ECAT[k][1]}" data-act="preset" data-id="${k}|${ad ? 1 : 0}|${l}">${l}</button>`).join('')}</div>
 ${a.single ? cardEditor(a.single) + repeatHTML(a) : ''}</div></div>`;
 }
 const can = n.ok > 0 && !a.saving;
@@ -1676,14 +1983,27 @@ const k = el.dataset.card;
 if (k === 'e') return [S.drawer.card, 'edit'];
 const a = S.add; return [a.tab === 'bulk' ? a.cards[+k] : a.single, 'add'];
 }
+function setTmode(c, v) {
+c.tmode = v; c.allDay = v === 'all_day'; c.undecided = v === 'undecided';
+if ((v === 'timed' || v === 'start_only') && !c.start) c.start = '10:00';
+if (v === 'timed' && !c.end) c.end = c.start < '23:00' ? pad(+c.start.slice(0, 2) + 1) + c.start.slice(2) : '23:59';
+if (v === 'part_of_day' && !c.dayPart) c.dayPart = 'am';
+}
 function applyField(c, f, v) {
-if (f === 'category') { c.category = v; c.typeOk = true; if (!c.visTouched) c.visibility = defaultVis(v); }
+if (f === 'category') { c.category = v; c.typeOk = true; if (!c.scopeTouched) c.scope = defaultScope(v); c.visibility = scopeVis(c.scope).visibility; }
+else if (f === 'scope') { c.scope = v; c.scopeTouched = true; c.visibility = scopeVis(v).visibility; c.visTouched = true; }
 else if (f === 'visibility') { c.visibility = v; c.visTouched = true; }
-else if (f === 'allDay') { c.allDay = v; if (v) c.undecided = false; if (!v && !c.undecided && !c.start) { c.start = '10:00'; c.end = '11:00'; } }
-else if (f === 'undecided') { c.undecided = v; if (v) c.allDay = false; if (!v && !c.start) { c.start = '10:00'; c.end = '11:00'; } }
+else if (f === 'tmode') setTmode(c, v);
+else if (f === 'allDay') setTmode(c, v ? 'all_day' : 'timed');
+else if (f === 'undecided') setTmode(c, v ? 'undecided' : 'timed');
 else if (f === 'date') { c.date = v; c.dateOk = true; c.dateNote = null; }
 else if (f === 'start' || f === 'end') { c[f] = v; c.badTime = false; if (c.end > c.start) c.nextDay = false; }
 else c[f] = v;
+}
+// 카드 → 유형·공개 범위·조율·확정 상태
+function evMeta(c) {
+const sc = c.scope || defaultScope(c.category);
+return { kind: c.category, category: c.category, ...scopeVis(sc), public_title: sc === 'type' ? (c.pubTitle || '').trim() : '', flex: c.flex || 'unknown', confirm: c.needsCheck ? 'needs_check' : 'confirmed' };
 }
 async function saveAdd() {
 const a = S.add; if (a.saving) return;
@@ -1691,7 +2011,7 @@ if (a.tab === 'single' && a.repeat && a.repeat.freq) return saveRepeat(a);
 const cards = (a.tab === 'bulk' ? a.cards : [a.single]).filter(c => cardState(c) === 'ok');
 if (!cards.length) return;
 if (!a.batch) a.batch = 'b' + rid();
-const items = cards.map(c => ({ client_key: `${a.batch}-${c.idx}${a.tab === 'single' ? 's' : ''}`, title: c.title.trim(), ...cardTimes(c), category: c.category, visibility: c.visibility, participants: c.participants, raw: c.raw || '', source: a.tab === 'bulk' ? 'manual_bulk' : 'manual_single' }));
+const items = cards.map(c => ({ client_key: `${a.batch}-${c.idx}${a.tab === 'single' ? 's' : ''}`, title: c.title.trim(), ...cardTimes(c), ...evMeta(c), participants: c.participants, raw: c.raw || '', source: a.tab === 'bulk' ? 'manual_bulk' : 'manual_single' }));
 a.saving = true; a.result = null; renderAdd();
 const { data, error } = await sb.rpc('create_events', { p_events: items });
 a.saving = false;
@@ -1710,7 +2030,9 @@ async function saveRepeat(a) {
 const c = a.single; if (cardState(c) !== 'ok') return;
 const r = a.repeat, t = cardTimes(c);
 if (r.until && r.until < c.date) { a.result = { err: true, title: '종료일을 확인해 주세요', text: '반복 종료일은 시작 날짜보다 뒤여야 해요.' }; renderAdd(); return; }
-const p = { title: c.title.trim(), category: c.category, visibility: c.visibility, participants: c.participants, freq: r.freq, start_date: c.date, until: r.until || null, time_mode: t.time_mode,
+if (!['timed', 'all_day', 'undecided'].includes(t.time_mode)) { a.result = { err: true, title: '반복 일정은 시간을 정해 주세요', text: '반복 일정은 ‘시작·종료 확정’, ‘종일’, ‘시간 미정’ 중에서 골라 주세요.' }; renderAdd(); return; }
+const m0 = evMeta(c);
+const p = { title: c.title.trim(), kind: m0.kind, category: m0.kind, visibility: m0.visibility, share: m0.share, flex: m0.flex, public_title: m0.public_title, participants: c.participants, freq: r.freq, start_date: c.date, until: r.until || null, time_mode: t.time_mode,
 start_time: t.time_mode === 'timed' ? c.start : null, end_time: t.time_mode === 'timed' ? c.end : null, byweekday: r.freq === 'weekly' ? (r.days.length ? r.days : [dowOf(c.date)]) : [], bymonthday: r.freq === 'monthly' ? +c.date.slice(8, 10) : null };
 a.saving = true; a.result = null; renderAdd();
 const { data, error } = await sb.rpc('create_series', { p });
@@ -1790,10 +2112,10 @@ if (error) throw error;
 S.members = data;
 }
 async function loadEvents() {
-const [ev, dt] = await Promise.all([sb.from('team_events').select('*').order('start_at').limit(3000), sb.from('event_details').select('event_id,title,note,source_link')]);
+const [ev, dt] = await Promise.all([sb.from('team_events').select('*').order('start_at').limit(3000), sb.from('event_details').select('event_id,title,note,source_link,kind,attendance')]);
 if (ev.error) throw ev.error;
 const det = new Map((dt.data || []).map(d => [d.event_id, d]));
-S.realEvents = ev.data.map(e => { const d = det.get(e.id); return { ...e, title: d ? d.title : null, note: d ? d.note : null, source_link: d ? d.source_link : null }; });
+S.realEvents = ev.data.map(e => { const d = det.get(e.id); return { ...e, title: d ? d.title : null, note: d ? d.note : null, source_link: d ? d.source_link : null, kind: d ? d.kind : null, attendance: d ? d.attendance : null }; });
 rebuildEvents(true);
 }
 async function loadSeries() {
@@ -1963,11 +2285,12 @@ const { data } = await sb.from('event_changes').select('*').eq('event_id', id).o
 if (S.drawer && S.drawer.id === id) { S.drawer.history = data || []; if (!S.drawer.edit) renderDrawer(); }
 }
 function editCard(e) {
-const s = kst(e.start_at), en = kst(e.end_at), end = evEnd(e);
-if (isUnd(e)) return { idx: 0, raw: '', title: e.title || '', note: e.note || '', date: s.date, dateOk: true, allDay: false, undecided: true, endDate: '', start: '', end: '', nextDay: false,
-category: e.category, typeOk: true, visibility: e.visibility, visTouched: true, participants: e.participants.slice(), saved: false, excluded: false, dupOk: true, version: e.version };
-return { idx: 0, raw: '', title: e.title || '', note: e.note || '', date: s.date, dateOk: true, allDay: e.all_day, undecided: false, endDate: e.all_day ? end : '', start: e.all_day ? '' : s.time, end: e.all_day ? '' : en.time, nextDay: !e.all_day && end !== s.date,
-category: e.category, typeOk: true, visibility: e.visibility, visTouched: true, participants: e.participants.slice(), saved: false, excluded: false, dupOk: true, version: e.version };
+const s = kst(e.start_at), en = kst(e.end_at), end = evEnd(e), tm = e.time_mode || (e.all_day ? 'all_day' : 'timed');
+return { idx: 0, raw: '', title: e.title || '', note: e.note || '', date: s.date, dateOk: true, tmode: tm, allDay: tm === 'all_day', undecided: tm === 'undecided',
+endDate: tm === 'all_day' ? end : '', start: tm === 'timed' || tm === 'start_only' ? s.time : '', end: tm === 'timed' ? en.time : '', est: e.est_end_at ? kst(e.est_end_at).time : '',
+dayPart: e.day_part || 'am', nextDay: tm === 'timed' && end !== s.date, category: evKind(e), typeOk: true, visibility: e.visibility, visTouched: true,
+scope: scopeOf(e), scopeTouched: true, pubTitle: e.public_title || '', flex: e.flex || 'unknown', needsCheck: needsCheck(e),
+participants: e.participants.slice(), saved: false, excluded: false, dupOk: true, version: e.version };
 }
 async function saveEvent() {
 const d = S.drawer, c = d.card, e = S.events.find(x => x.id === d.id);
@@ -1979,8 +2302,16 @@ if (new Date(t.start_at).getTime() !== new Date(e.start_at).getTime()) patch.sta
 if (new Date(t.end_at).getTime() !== new Date(e.end_at).getTime()) patch.end_at = t.end_at;
 if (t.all_day !== e.all_day) patch.all_day = t.all_day;
 if (t.time_mode !== (e.time_mode || (e.all_day ? 'all_day' : 'timed'))) patch.time_mode = t.time_mode;
-if (c.category !== e.category) patch.category = c.category;
-if (c.visibility !== e.visibility) patch.visibility = c.visibility;
+const ms = x => x ? new Date(x).getTime() : null;
+if (ms(t.est_end_at) !== ms(e.est_end_at)) patch.est_end_at = t.est_end_at || null;
+if (t.day_part && t.day_part !== e.day_part) patch.day_part = t.day_part;
+const m0 = evMeta(c);
+if (c.category !== evKind(e)) patch.kind = c.category;
+if (m0.visibility !== e.visibility) patch.visibility = m0.visibility;
+if (m0.share !== (e.share || 'type')) patch.share = m0.share;
+if (m0.public_title !== (e.public_title || '')) patch.public_title = m0.public_title;
+if (m0.flex !== (e.flex || 'unknown')) patch.flex = m0.flex;
+if (m0.confirm !== (e.confirm || 'confirmed')) patch.confirm = m0.confirm;
 if (c.participants.slice().sort().join() !== e.participants.slice().sort().join()) patch.participants = c.participants;
 if (e.virtual) return saveSeriesEdit(d, c, e, t);
 if (!Object.keys(patch).length) { d.edit = false; renderDrawer(); return; }
@@ -2000,10 +2331,12 @@ d.edit = false; d.notice = null; render(); openEvent(d.id);
 async function saveSeriesEdit(d, c, e, t) {
 const sc = d.scope || 'one', s = e.series;
 let p;
-if (sc === 'one') p = { title: c.title.trim(), note: c.note || '', start_at: t.start_at, end_at: t.end_at, all_day: t.all_day, time_mode: t.time_mode, category: c.category, visibility: c.visibility, participants: c.participants };
+const m0 = evMeta(c), meta = { kind: m0.kind, category: m0.kind, visibility: m0.visibility, share: m0.share, flex: m0.flex, public_title: m0.public_title };
+if (sc === 'one') p = { title: c.title.trim(), note: c.note || '', start_at: t.start_at, end_at: t.end_at, all_day: t.all_day, time_mode: t.time_mode, est_end_at: t.est_end_at || null, day_part: t.day_part || null, ...meta, participants: c.participants };
 else {
 if (c.date !== e.series_date) { d.notice = '날짜를 옮기려면 ‘이번 일정만’을 골라 주세요. 반복 요일이나 날짜를 바꾸려면 반복 일정을 새로 등록해 주세요.'; renderDrawer(); return; }
-p = { title: c.title.trim(), note: c.note || '', category: c.category, visibility: c.visibility, participants: c.participants, time_mode: t.time_mode, start_time: t.time_mode === 'timed' ? c.start : null, end_time: t.time_mode === 'timed' ? c.end : null };
+if (!['timed', 'all_day', 'undecided'].includes(t.time_mode)) { d.notice = '반복 일정 전체는 ‘시작·종료 확정’, ‘종일’, ‘시간 미정’만 쓸 수 있어요. 이 날만 바꾸려면 ‘이번 일정만’을 골라 주세요.'; renderDrawer(); return; }
+p = { title: c.title.trim(), note: c.note || '', ...meta, participants: c.participants, time_mode: t.time_mode, start_time: t.time_mode === 'timed' ? c.start : null, end_time: t.time_mode === 'timed' ? c.end : null };
 }
 d.saving = true; renderDrawer();
 const { data, error } = await sb.rpc('update_series', { p_id: s.id, p_version: s.version, p_scope: sc, p_date: e.series_date, p });
@@ -2048,7 +2381,7 @@ const t = e.target, card = t.closest('.rcard');
 if (card && t.dataset.f) {
 const [c, mode] = cardFromEl(card);
 applyField(c, t.dataset.f, t.type === 'checkbox' ? t.checked : t.value);
-if (t.dataset.f === 'allDay' || t.dataset.f === 'undecided') { mode === 'edit' ? renderDrawer() : renderAdd(); return; }
+if (['allDay', 'undecided', 'tmode', 'scope', 'category'].includes(t.dataset.f)) { mode === 'edit' ? renderDrawer() : renderAdd(); return; }
 refreshCard(card, c, mode); return;
 }
 if (t.dataset.pick) { t.checked ? pick.add(t.dataset.pick) : pick.delete(t.dataset.pick); $('#m-count').textContent = `${pick.size}개 선택됨`; }
@@ -2058,6 +2391,10 @@ if (t.id === 'vid-file') uploadVideo(t.files[0]);
 if (t.id === 'avatar-file') setAvatar(t.files[0]);
 if (t.id === 'rep-freq') { S.add.repeat.freq = t.value; renderAdd(); return; }
 if (t.id === 'rep-until') { S.add.repeat.until = t.value; return; }
+if (t.id === 'av-date' && t.value) { S.avDay = t.value; render(); return; }
+if (t.id === 'ft-from' && t.value) { S.ft.from = t.value; if (S.ft.to && S.ft.to < t.value) S.ft.to = ''; render(); return; }
+if (t.id === 'ft-to' && t.value) { S.ft.to = t.value; render(); return; }
+if (t.id === 'ft-dur') { S.ft.dur = +t.value; render(); return; }
 if (t.id === 'cw-pick') { S.cwPick = t.value; const x = $('#cw-text'); if (x) { x.hidden = t.value !== 'text:'; if (!x.hidden) x.focus(); } return; }
 if (t.dataset.taskDone) {
 const done = t.checked;
@@ -2309,6 +2646,23 @@ case 'wp-clear': { const { error } = await sb.from('work_patterns').delete().eq(
 case 'status-cancel': S.statusEdit = false; render(); break;
 case 'pick-status': S.statusPick = id; el.parentElement.querySelectorAll('.fchip').forEach(b => b.setAttribute('aria-pressed', b.dataset.id === id)); break;
 /* 팀 일정 */
+case 'sv-tab': S.sv = id; if (id === 'avail' && !S.ft.people.size) S.ft.people = new Set(team().map(m => m.id)); render(); break;
+case 'cal-mode': S.calMode = id; if (id === 'month') S.calMonth = S.week.slice(0, 7); render(); break;
+case 'cm-prev': case 'cm-next': { const [y, m] = S.calMonth.split('-').map(Number), d = new Date(Date.UTC(y, m - 1 + (a === 'cm-next' ? 1 : -1), 1)); S.calMonth = d.toISOString().slice(0, 7); render(); break; }
+case 'cm-this': S.calMonth = today().slice(0, 7); render(); break;
+case 'cm-day': S.week = weekStart(id); S.calMode = 'week'; render(); break;
+case 'av-prev': S.avDay = addDays(S.avDay || today(), -1); render(); break;
+case 'av-next': S.avDay = addDays(S.avDay || today(), 1); render(); break;
+case 'av-today': S.avDay = today(); render(); break;
+case 'av-person': S.avPeople.has(id) ? S.avPeople.delete(id) : S.avPeople.add(id); render(); break;
+case 'av-all': S.avPeople.clear(); render(); break;
+case 'ft-person': S.ft.people.has(id) ? S.ft.people.delete(id) : S.ft.people.add(id); render(); break;
+case 'ft-make': {
+const [d, a0] = id.split('|'), st0 = +a0, en0 = st0 + S.ft.dur;
+S.add = null; openAdd('single'); const c = S.add.single;
+c.date = d; c.start = hhmm(st0); c.end = en0 >= 1440 ? '23:59' : hhmm(en0); applyField(c, 'category', 'team_meeting'); setTmode(c, 'timed'); c.participants = [...S.ft.people];
+renderAdd(); break;
+}
 case 'wk-prev': S.week = addDays(S.week, -7); render(); break;
 case 'wk-next': S.week = addDays(S.week, 7); render(); break;
 case 'wk-this': S.week = weekStart(today()); render(); break;
@@ -2337,13 +2691,14 @@ case 'add-more': S.add = { tab: S.add.tab, text: '', cards: [], batch: null, res
 case 'add-tab': S.add.tab = id; if (id === 'single' && !S.add.single) S.add.single = blankCard(); S.add.result = null; renderAdd(); break;
 case 'add-parse': doParse(); break;
 case 'add-save': saveAdd(); break;
-case 'preset': { const [k, ad, l] = id.split('|'), c = S.add.single; c.category = k; c.typeOk = true; c.visibility = c.visTouched ? c.visibility : defaultVis(k); c.allDay = ad === '1'; if (!c.title.trim()) c.title = l; if (!c.allDay && !c.start) { c.start = '10:00'; c.end = '11:00'; } c.participants = c.participants.length ? c.participants : [S.me.id]; renderAdd(); break; }
+case 'preset': { const [k, ad, l] = id.split('|'), c = S.add.single; applyField(c, 'category', k); setTmode(c, ad === '1' ? 'all_day' : (c.tmode === 'all_day' ? 'timed' : c.tmode || 'timed')); if (!c.title.trim()) c.title = l; c.participants = c.participants.length ? c.participants : [S.me.id]; renderAdd(); break; }
 case 'card-ex': { const card = el.closest('.rcard'), [c, mode] = cardFromEl(card); c.excluded = !c.excluded; refreshCard(card, c, mode); break; }
 case 'card-fix': {
 const card = el.closest('.rcard'), [c, mode] = cardFromEl(card);
 if (id === 'date-ok') c.dateOk = true; if (id === 'type-ok') c.typeOk = true; if (id === 'dup-ok') c.dupOk = true; if (id === 'nextday') c.nextDay = true;
-if (id === 'allday') { c.allDay = true; c.undecided = false; mode === 'edit' ? renderDrawer() : renderAdd(); break; }
-if (id === 'undecided') { c.undecided = true; c.allDay = false; mode === 'edit' ? renderDrawer() : renderAdd(); break; }
+if (id === 'allday') { setTmode(c, 'all_day'); mode === 'edit' ? renderDrawer() : renderAdd(); break; }
+if (id === 'undecided') { setTmode(c, 'undecided'); mode === 'edit' ? renderDrawer() : renderAdd(); break; }
+if (id === 'startonly') { setTmode(c, 'start_only'); mode === 'edit' ? renderDrawer() : renderAdd(); break; }
 refreshCard(card, c, mode); break;
 }
 /* 알림 */
@@ -2420,7 +2775,7 @@ try { await Promise.all([loaders.docs(), loadEvents(), loadNotifs(), loadSlack()
 catch (e) { S.load = 'error'; }
 clearTimeout(timer); render(); subscribe();
 }
-S.month = today().slice(0, 7); S.week = weekStart(today());
+S.month = today().slice(0, 7); S.week = weekStart(today()); S.calMonth = S.month; S.avDay = today();
 function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]); }
 async function dropSession() {
 try { await withTimeout(sb.auth.signOut({ scope: 'local' }), 3000); } catch (e) {}

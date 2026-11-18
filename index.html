@@ -186,27 +186,28 @@ main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: m
 .team { padding: 16px; display: grid; gap: 14px; }
 .crew { display: grid; gap: 12px; margin-bottom: 20px; }
 .crew .sec-title { flex-wrap: wrap; justify-content: flex-start; }
-.mcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
-.mcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
-.mcard.me { box-shadow: inset 0 0 0 1.5px var(--line-strong); }
-.mc-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.mc-head > .av { width: 42px; height: 42px; font-size: 16px; flex: none; }
-.mc-who { display: grid; gap: 3px; min-width: 0; flex: 1; }
-.mc-who b { font-size: 14.5px; font-weight: 600; }
-.mc-who b small { font-weight: 400; color: var(--faint); }
-.mc-who > span { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
-.mc-who small { font-size: 11.5px; color: var(--muted); overflow-wrap: anywhere; }
-.mc-note { margin: -4px 0 0; font-size: 12px; color: var(--muted); }
-.mc-rows { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 7px 10px; margin: 0; font-size: 13px; }
-.mc-rows dt { color: var(--muted); font-size: 12px; padding-top: 1px; }
-.mc-rows dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.mc-rows .btn.link { text-align: left; white-space: normal; font-size: 13px; }
-.mc-work { display: grid; gap: 1px; }
-.mc-rows .hot { color: var(--red, #c62828); font-weight: 600; }
-.mc-acts { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px; border-top: 1px solid var(--line); padding-top: 10px; }
+.mcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 14px; }
+.mcard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; grid-template-rows: auto 1fr auto; gap: 14px; min-height: 176px; min-width: 0; }
+.mcard.me { border-color: var(--line-strong); }
+.mc-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.mc-head > .av { width: 28px; height: 28px; font-size: 12px; }
+.mc-name { font-size: 13.5px; font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mc-st { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 560; color: var(--muted); white-space: nowrap; }
+.mc-st i { width: 7px; height: 7px; border-radius: 50%; background: var(--c, var(--faint)); }
+.mc-st.c-line i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--faint); }
+.mc-now { display: grid; align-content: start; gap: 6px; min-width: 0; }
+.mc-label { font-size: 11px; letter-spacing: .02em; color: var(--faint); }
+.mc-task { font: inherit; font-size: 17px; line-height: 1.35; font-weight: 650; color: var(--fg); text-align: left; background: none; border: 0; padding: 0; cursor: default; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+button.mc-task { cursor: pointer; }
+button.mc-task:hover { text-decoration: underline; text-underline-offset: 3px; }
+.mc-none { font-size: 14px; color: var(--faint); }
+.mc-done { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mc-edit { justify-self: start; }
+@media (max-width: 560px) { .mcard { min-height: 0; padding: 16px; } }
 .cw-form { display: grid; gap: 6px; }
 .cw-form select, .cw-form input { font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); color: inherit; width: 100%; min-width: 0; }
-.crew .status-edit { padding: 14px 16px; display: grid; gap: 10px; }
+#my-status .status-edit { display: grid; gap: 10px; }
 .ci-sum { display: grid; gap: 4px; padding: 10px 12px; background: var(--sunken); border-radius: 8px; font-size: 13.5px; }
 .ci-task { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; }
 #ci-form .chk { align-items: baseline; }
@@ -1028,28 +1029,32 @@ const t = today(), lim = addDays(t, 7);
 return S.events.filter(e => e.status === 'active' && e.participants.includes(id) && kst(e.start_at).date <= lim
 && (isUnd(e) ? kst(e.start_at).date >= t : e.all_day ? kst(e.start_at).date > t : new Date(e.start_at).getTime() > nowMs)).sort((a, b) => a.start_at.localeCompare(b.start_at))[0] || null;
 }
+// 카드에 보이는 상태는 다섯 가지로 묶는다 (근무시간 밖·휴무·휴가는 '부재')
+const CARD_ST = { '업무 중': ['업무 중', 'green'], '회의 중': ['회의 중', 'violet'], '외근 중': ['외근 중', 'orange'], '휴가·부재 중': ['부재', 'slate'], '근무 예정': ['부재', 'slate'], '근무 외': ['부재', 'slate'], '상태 미확인': ['상태 미확인', 'line'] };
+// 현재 업무: 직접 고른 업무 > 오늘 체크인의 최우선 업무 > 체크인에서 고른 업무 중 아직 안 끝난 첫 번째.
+// 일정(회의·외근·부재)은 상태만 바꾸고 업무는 건드리지 않는다. 끝난 이슈·업무는 표시하지 않는다.
+function currentWork(m) {
+const manual = workItem(m.current_work);
+if (manual && !manual.done && !manual.gone) return { w: manual, src: 'manual' };
+const p = planOf(m.id);
+const fin = manual && manual.done ? manual : null;
+if (p && p.status === 'checked_in') {
+const pr = workItem(p.priority);
+if (pr && !pr.done && !pr.gone) return { w: pr, src: 'checkin', fin };
+const next = (p.items || []).map(workItem).find(x => x && !x.done && !x.gone);
+if (next) return { w: next, src: 'checkin', fin };
+}
+return { w: null, fin };
+}
 function crewCard(m, now) {
-const mine = m.id === S.me.id, st = autoStatus(m, now), p = planOf(m.id), av = availability(m.id, today(), nowMinKst(now)), w = av.w;
-const iss = memberIssues(m.id), nx = nextEvent(m.id, now), cw = workItem(m.current_work), pr = workItem(p?.priority), pd = planDone(p);
-const ci = p ? { checked_in: '<span class="tag c-green">체크인 완료</span>', pending: '<span class="tag line">체크인 전</span>', skipped: '<span class="tag line">체크인 건너뜀</span>', off: '<span class="tag c-slate">오늘 휴무</span>' }[p.status]
-: w.start ? '<span class="tag line">체크인 전</span>' : '';
-const work = w.start ? `<span>${w.start}–${w.end} · ${fmtMin(w.minutes)} 예정${av.meet ? ` · 일정 ${fmtMin(av.meet)}` : ''}</span><b>남은 가용 ${fmtMin(av.left)}</b>`
-: w.off ? `<span>${esc(w.why)}</span>` : `<span class="sub">근무 패턴이 없어요${mine ? ' · <button class="btn link" data-act="nav" data-id="settings">설정에서 등록</button>' : ''}</span>`;
-const issLine = iss.l.length ? `<span>진행 중 ${iss.prog} · 확인 대기 ${iss.review}${iss.re ? ` · <b class="hot">재오픈 ${iss.re}</b>` : ''}${iss.late ? ` · <b class="hot">기한 초과 ${iss.late}</b>` : ''}${iss.done ? ` · 오늘 해결 ${iss.done}` : ''}</span>` : '<span class="sub">맡은 이슈 없음</span>';
-const nxLine = nx ? `<button class="btn link" data-act="event" data-id="${nx.id}">${kst(nx.start_at).date === today() ? '' : md(kst(nx.start_at).date) + ' '}${evTime(nx, kst(nx.start_at).date)} ${esc(evLabel(nx))}</button>` : '<span class="sub">7일 안에 없음</span>';
-let cwBody = cw ? itemHTML(cw) : '<span class="sub">선택 안 함</span>';
-if (mine && S.cwEdit) cwBody = cwEditor(p);
-const acts = mine ? `<div class="mc-acts">${S.cwEdit ? '' : '<button class="btn small" data-act="cw-edit">지금 업무 바꾸기</button>'}<button class="btn small" data-act="ci-open">${p && p.status === 'checked_in' ? '오늘 업무 수정' : '오늘 업무 정하기'}</button><button class="btn small" data-act="status-edit">상태 직접 설정</button></div>` : '';
+const mine = m.id === S.me.id, st = autoStatus(m, now), cs = CARD_ST[st.s] || ['상태 미확인', 'line'], cur = currentWork(m), w = cur.w;
+const title = w ? (w.issue ? `<button class="mc-task" data-act="issue" data-id="${esc(w.issue)}">${esc(w.title)}</button>` : `<span class="mc-task">${esc(w.title)}</span>`) : '<span class="mc-none">진행 중인 업무 없음</span>';
+const done = !w && cur.fin ? `<span class="mc-done">✓ ${esc(cur.fin.title)} 해결 완료</span>` : '';
+const body = mine && S.cwEdit ? cwEditor(planOf(m.id)) : `${title}${done}`;
 return `<article class="mcard${mine ? ' me' : ''}" aria-label="${esc(m.name)}">
-<div class="mc-head">${avatar(m.id)}<div class="mc-who"><b>${esc(m.name)}${mine ? ' <small>(나)</small>' : ''}</b><span>${stTag(st.s)}<small title="상태를 정한 근거">${esc(st.why)}</small></span></div>${ci}</div>
-${st.manual && m.status_note ? `<p class="mc-note">${esc(m.status_note)}</p>` : ''}
-<dl class="mc-rows">
-<dt>지금 하는 업무</dt><dd>${cwBody}</dd>
-<dt>오늘 최우선</dt><dd>${pr ? itemHTML(pr) : '<span class="sub">정하지 않음</span>'}${pd.n ? ` <span class="sub">· 오늘 업무 ${pd.n}개 중 ${pd.d}개 완료</span>` : ''}</dd>
-<dt>근무·가용</dt><dd class="mc-work">${work}</dd>
-<dt>담당 이슈</dt><dd>${issLine}</dd>
-<dt>다음 일정</dt><dd>${nxLine}</dd>
-</dl>${acts}</article>`;
+<div class="mc-head">${avatar(m.id)}<b class="mc-name">${esc(m.name)}</b><span class="mc-st c-${cs[1]}" title="${esc(st.why)}"><i></i>${cs[0]}</span></div>
+<div class="mc-now"><span class="mc-label">지금 하는 업무</span>${body}</div>
+${mine && !S.cwEdit ? '<button class="btn small mc-edit" data-act="cw-edit">업무 변경</button>' : ''}</article>`;
 }
 function cwEditor(p) {
 const mineOpen = memberIssues(S.me.id).open, tasks = S.tasks.filter(t => t.member === S.me.id && !t.done);
@@ -1065,13 +1070,12 @@ ${tasks.length ? `<optgroup label="내 업무">${tasks.map(t => o(`task:${t.id}`
 }
 function crewHTML() {
 const now = Date.now(), ppl = team().slice().sort((a, b) => (b.id === S.me.id) - (a.id === S.me.id));
-const edit = S.statusEdit ? statusForm() : '';
-return `<section class="crew" aria-label="팀원 현황"><div class="sec-title">팀원 현황<small>일정·근무 패턴·체크인으로 자동 계산해요. 근거가 없으면 ‘상태 미확인’으로 둬요.</small></div>${edit}
+return `<section class="crew" aria-label="팀원 현황"><div class="sec-title">팀원 현황</div>
 <div class="mcards">${ppl.map(m => crewCard(m, now)).join('')}</div></section>`;
 }
 function statusForm() {
 const me = member(S.me.id), cur = S.statusPick || (me.status_mode === 'manual' && kst(me.status_at || '1970-01-01T00:00:00Z').date === today() ? (OLD_ST[me.status] || me.status) : '');
-return `<form class="status-edit sheet" id="status-form"><div class="sec">내 상태 직접 설정 <span class="sub">오늘 하루만 적용돼요. 내일은 다시 자동으로 돌아가요.</span></div>
+return `<form class="status-edit" id="status-form"><div class="sec">내 상태 직접 설정 <span class="sub">오늘 하루만 적용돼요. 내일은 다시 자동으로 돌아가요.</span></div>
 <div class="chips">${Object.keys(MSTATUS2).filter(k => k !== '상태 미확인').map(k => `<button type="button" class="fchip c-${MSTATUS2[k]}" data-act="pick-status" data-id="${k}" aria-pressed="${cur === k}">${k}</button>`).join('')}
 <button type="button" class="fchip" data-act="status-auto">자동으로 되돌리기</button></div>
 <input type="text" id="status-note" maxlength="40" placeholder="메모 (예: 판교 미팅, 15시 복귀)" value="${esc(me.status_note)}" aria-label="상태 메모">
@@ -1463,6 +1467,9 @@ return `<div class="head"><div><h1>설정</h1><p>내 프로필과 일정 공개 
 <div class="form-foot"><button class="btn primary">비밀번호 바꾸기</button></div></form>
 <section class="sheet form"><h2>팀원</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>이름</th><th>아이디</th><th>권한</th><th>상태</th></tr></thead><tbody>${rows}</tbody></table></div>
 <small class="sub">팀원 추가와 권한 변경은 관리자에게 요청하세요.</small></section></div>
+<section class="sheet form" id="my-status"><h2>내 상태와 오늘 업무</h2>
+<p class="sub">상태는 일정과 근무 패턴으로 자동 표시돼요. 다르게 보여야 하면 오늘 하루만 직접 정할 수 있어요.</p>
+${S.statusEdit ? statusForm() : `<div class="ap-test"><button type="button" class="btn small" data-act="status-edit">상태 직접 설정</button><button type="button" class="btn small" data-act="ci-open">${planOf(S.me.id)?.status === 'checked_in' ? '오늘 업무 수정' : '오늘 업무 정하기'}</button></div>`}</section>
 ${workSettingsHTML()}
 <section class="sheet form"><h2>일정 유형과 공개 범위</h2><div class="tbl-wrap"><table class="tbl"><tbody>
 ${Object.entries(ECAT).map(([k, v]) => `<tr><td><span class="tag c-${v[1]}">${v[0]}</span></td><td class="sub">${{ business: '투자사·고객 미팅, 행사, 경진대회처럼 팀 밖의 공식 일정', external_meeting: '외근, 출장, 외부 미팅, 특강', absence: '병원, 외출, 자리 비움처럼 짧은 부재', vacation: '연차, 반차, 휴가', personal: '점심·저녁 약속 같은 개인 일정. 기본은 비공개예요.', other: '위에 맞지 않는 일정' }[k]}</td></tr>`).join('')}
